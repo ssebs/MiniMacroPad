@@ -29,10 +29,10 @@ A python driver to provide functionality to the mini macro pad.
     - Built file is under `./dist/`
 
 ## TODO:
-- [ ] Make driver work
-- [ ] Functional actions / macros
-  - [ ] Keyboard macros
+- [x] Make driver work
+- [x] Functional actions / macros
+  - [x] Keyboard macros
   - [ ] Mouse macros
   - [ ] Other stuff?
-- [ ] JSON customizable actions (or YAML)
+- [...] JSON customizable actions (or YAML)
   - [ ] EZ edit for these
