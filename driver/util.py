@@ -2,23 +2,37 @@
 # util.py - Util stuff
 from enum import Enum
 from tkinter import ttk
+import pyautogui
+
+
+# Functions below
+def send_text(idx: int):
+    pyautogui.write(MACRO_ITEMS[idx]["text"])
+
+def send_undo(idx: int):
+    pyautogui.hotkey('ctrl', 'z')
+
 
 MACRO_ITEMS = [
     {
         "pos": 1,
-        "text": "Test"
+        "text": "Test\n",
+        "func": send_text
     },
     {
         "pos": 2,
-        "text": "Foo"
+        "text": "Foo\n",
+        "func": send_text
     },
     {
         "pos": 3,
-        "text": "Bar"
+        "text": "Bar\n",
+        "func": send_text
     },
     {
         "pos": 4,
-        "text": "undo"
+        "text": "undo",
+        "func": send_undo
     }
 ]
 

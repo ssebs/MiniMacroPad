@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['notify.py'],
+    ['minimacropad.py'],
     pathex=[],
     binaries=[('.\\res\\*', '.')],
     datas=[('.\\res\\*', '.')],

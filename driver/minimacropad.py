@@ -8,13 +8,13 @@ import os
 
 import serial
 import serial.tools.list_ports
+
 from playsound import playsound
 
 from util import MACRO_ITEMS, CustomSerialException, SerialNotFoundException, SerialMountException
 from tkinter import Tk, ttk, messagebox
 
-DEBUG = True
-SECOND_MONITOR = False
+DEBUG = False
 RETRY_COUNT = 5
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
@@ -134,9 +134,13 @@ def main_loop(arduino):
     """
     while True:
         data = str(arduino.readline().decode().strip())
-        if data != "" and DEBUG:
-            print(data)
-        # Do something here
+        if data != "":
+            if DEBUG:
+                print(data)
+            # Do something based on button that was pressed
+            btn_pos = int(data) - 1
+            MACRO_ITEMS[btn_pos]["func"](btn_pos)
+        
     # end loop
 # end main_loop
 
