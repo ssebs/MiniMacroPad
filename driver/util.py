@@ -9,8 +9,16 @@ import pyautogui
 def send_text(idx: int):
     pyautogui.write(MACRO_ITEMS[idx]["text"])
 
+
 def send_undo(idx: int):
     pyautogui.hotkey('ctrl', 'z')
+
+
+def send_hotkey(idx: int):
+    if "hotkeys" not in MACRO_ITEMS[idx]:
+        raise Exception(f"Hotkeys not defined in MACRO_ITEMS[{idx}]")
+    for keys in MACRO_ITEMS[idx]["hotkeys"]:
+        pyautogui.hotkey(*keys)
 
 
 MACRO_ITEMS = [
@@ -26,13 +34,15 @@ MACRO_ITEMS = [
     },
     {
         "pos": 3,
-        "text": "Bar\n",
-        "func": send_text
+        "text": "Startup Folder",
+        "hotkeys": [["win", "r"], ["shell:startup", "enter"]],
+        "func": send_hotkey
     },
     {
         "pos": 4,
-        "text": "undo",
-        "func": send_undo
+        "text": "Undo",
+        "hotkeys": [["ctrl", "z"]],
+        "func": send_hotkey
     }
 ]
 
