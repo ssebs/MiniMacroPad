@@ -18,7 +18,9 @@ SECOND_MONITOR = False
 RETRY_COUNT = 5
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
-SERIAL_QRY = "COM"
+SERIAL_QRY = "Arduino Leonardo"
+SERIAL_BAUD = 9600
+SERIAL_TIMEOUT = 0.1
 MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
 
 
@@ -35,7 +37,7 @@ def main():
     TODO: Make this OOP instead of using global vars and constants
     """
     if DEBUG:
-        print("Driver for macro pad")
+        print("Driver for macro pad:")
     for tries in range(RETRY_COUNT):
         try:
             arduino = init_arduino()
@@ -61,7 +63,7 @@ def main():
         # break if trying succeeds
         break
 
-    main_loop(arduino, root)
+    main_loop(arduino)
 # end main
 
 
@@ -73,13 +75,13 @@ def init_arduino() -> serial.Serial:
     """
     # what my PC says the teensy LC is called, could use COM7 but that could change
     signal.signal(signal.SIGINT, signal.default_int_handler)
-    serial_port = load_port(SERIAL_QRY, False)
+    serial_port = load_port(SERIAL_QRY, False, DEBUG)
 
     if serial_port is None:
         raise SerialNotFoundException(
             f"Failed to load serial port: {SERIAL_QRY}")
 
-    arduino = serial.Serial(port=serial_port, baudrate=9600,  timeout=1.2)
+    arduino = serial.Serial(port=serial_port, baudrate=SERIAL_BAUD,  timeout=SERIAL_TIMEOUT)
     if arduino is None:
         raise SerialMountException(
             f"Failed to mount Serial port: {SERIAL_QRY}")
@@ -126,12 +128,12 @@ def init_arduino() -> serial.Serial:
 # # end init_gui
 
 
-def main_loop(arduino, root):
+def main_loop(arduino):
     """
     Handles serial comms
     """
     while True:
-        data = str(arduino.readline().decode())
+        data = str(arduino.readline().decode().strip())
         if data != "" and DEBUG:
             print(data)
         # Do something here
@@ -139,7 +141,7 @@ def main_loop(arduino, root):
 # end main_loop
 
 
-def load_port(name: str, is_COM_name: bool = True) -> str:
+def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
     """
     Gets the COM port as a str that the teensy is connected to
     params:
@@ -149,11 +151,11 @@ def load_port(name: str, is_COM_name: bool = True) -> str:
         Serial COM port as str
     """
     ports = list(serial.tools.list_ports.comports())
-    if DEBUG:
+    if verbose:
         print("Serial Ports:")
     for p in ports:
-        if DEBUG:
-            print(f"{p.name} - {p.description}")
+        if verbose:
+            print(f"  {p.name} - {p.description}")
         if is_COM_name:
             if p.name == name:
                 return p.name
@@ -162,23 +164,6 @@ def load_port(name: str, is_COM_name: bool = True) -> str:
                 return p.name
     return None
 # end load_port
-
-
-def handle_close():
-    """
-    Handles the close button operation, cleanup stuff
-    """
-    if thread1 is not None:
-        do_close = True
-        root.destroy()
-        sys.exit(0)
-    else:
-        print("thread is none")
-        root.destroy()
-        sys.exit(0)
-    # stop thread1
-# end handle_close
-
 
 if __name__ == "__main__":
     main()
