@@ -23,7 +23,8 @@ RETRY_COUNT = 5
 SECOND_MONITOR = True
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
-SERIAL_QRY = "Arduino Leonardo"
+# SERIAL_QRY = "Arduino Leonardo"
+SERIAL_QRY = "USB Serial Device (COM7)"
 SERIAL_BAUD = 9600
 SERIAL_TIMEOUT = 0.1
 MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
@@ -119,11 +120,14 @@ def init_gui() -> MacroDisplay:
     # main_frame = ttk.Frame(root)
     # main_frame.pack()
 
-    macro_display = MacroDisplay(root)
+    smol_grid = {"x": 2, "y": 3}
+    big_grid = {"x": 3, "y": 4}
 
-    # root.protocol("WM_DELETE_WINDOW", handle_close)
+    macro_display = MacroDisplay(root, grid_size=big_grid)
+
+    root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
-    root.resizable(False, False)
+    # root.resizable(False, False)
     root.title("MiniMacroPad")
 
     posX = None
@@ -150,13 +154,18 @@ def main_loop(arduino, root, window):
         if data != "":
             if DEBUG:
                 print(data)
-            # Do something based on button that was pressed
-            btn_pos = int(data) - 1
-            # 11 => 1
-            if len(str(btn_pos)) > 1:
-                btn_pos = int(str(btn_pos)[-1])
-            MACRO_ITEMS[btn_pos]["func"](btn_pos)
-            window.click(btn_pos + 1)
+            if "log:" in data:
+                if DEBUG:
+                    print(data)
+
+            if ":" not in data:    
+                # Do something based on button that was pressed
+                btn_pos = int(data) - 1
+                # 11 => 1
+                if len(str(btn_pos)) > 1:
+                    btn_pos = int(str(btn_pos)[-1])
+                MACRO_ITEMS[btn_pos]["func"](btn_pos)
+                window.click(btn_pos + 1)
 
     # end loop
 # end main_loop
@@ -186,6 +195,20 @@ def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str
     return None
 # end load_port
 
+def handle_close():
+    """
+    Handles the close button operation, cleanup stuff
+    """
+    if thread1 is not None:
+        do_close = True
+        root.destroy()
+        sys.exit(0)
+    else:
+        print("thread is none")
+        root.destroy()
+        sys.exit(0)
+    # stop thread1
+# end handle_close
 
 if __name__ == "__main__":
     main()

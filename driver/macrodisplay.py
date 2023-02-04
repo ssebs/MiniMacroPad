@@ -19,27 +19,30 @@ class MacroDisplay(ttk.Frame):
         update_mode - update the mode and rebuild grid with new data. Cross references MACRO_ITEMS
     """
 
-    def __init__(self, container: Tk, **options):
+    def __init__(self, container: Tk, grid_size: dict, **options):
         """
-        Constructor
+        Constructor. Expects TK container, and grid_size like {"x": 2, "y": 3}
         """
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
         self.truncate_length = 28
         self.container = container
-        self.title = StringVar(value="Title")
-        self.status = StringVar(value="Status")
+        self.title = StringVar(value="<>")
+        self.status = StringVar(value="<>")
 
-        self.grid(column=2, row=3)
-        self.size = {"x": 2, "y": 3}
+        # TODO: Support more than 1 grid size
+        self.size = grid_size
+        self.grid(column=grid_size['x'], row=grid_size['y'])
+        # self.grid(column=2, row=3)
+        # self.size = {"x": 2, "y": 3}
 
         self.macrogrid = self._init_grid(verbose=True)
         self.lbl = ttk.Button(
-            self.container, textvariable=self.title, bootstyle=(LIGHT, OUTLINE), command=lambda : self.click(3))
+            self.container, textvariable=self.title, bootstyle=(SECONDARY, OUTLINE), command=lambda : self.click(3))
         self.lbl.grid(row=0, column=0, padx=0, pady=0)
 
         self.status_lbl = ttk.Button(
-            self.container, textvariable=self.status, bootstyle=(LIGHT, OUTLINE))
+            self.container, textvariable=self.status, bootstyle=(SECONDARY, OUTLINE))
         self.status_lbl.grid(row=0, column=1, padx=0, pady=0)
     # end __init__
 
@@ -65,10 +68,10 @@ class MacroDisplay(ttk.Frame):
                 self.container, text=item['text'].strip(), bootstyle=(DARK))
 
             grid[item["pos"]].grid(row=r, column=c,
-                                   ipadx=5, ipady=5, padx=0, pady=0
+                                   ipadx=5, ipady=5, padx=2, pady=2
                                    )
             # Increment
-            if item["pos"] % 2 == 0:
+            if item["pos"] % self.size['x'] == 0:
                 r += 1
                 c = 0
             else:

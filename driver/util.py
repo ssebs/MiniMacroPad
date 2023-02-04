@@ -46,7 +46,37 @@ MACRO_ITEMS = [
         "text": "Undo",
         "hotkeys": [["ctrl", "z"]],
         "func": send_hotkey
-    }
+    },
+    {
+        "pos": 5,
+        "text": "TEST 5\n",
+        "func": send_text
+    },
+    {
+        "pos": 6,
+        "text": "TEST 6\n",
+        "func": send_text
+    },
+    {
+        "pos": 7,
+        "text": "TEST 7\n",
+        "func": send_text
+    },
+    {
+        "pos": 8,
+        "text": "TEST 8\n",
+        "func": send_text
+    },
+    {
+        "pos": 9,
+        "text": "TEST 9\n",
+        "func": send_text
+    },
+    {
+        "pos": 10,
+        "text": "TEST 10\n",
+        "func": send_text
+    },
 ]
 
 
