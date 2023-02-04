@@ -5,6 +5,7 @@ import time
 import signal
 import sys
 import os
+import threading
 
 import serial
 import serial.tools.list_ports
@@ -12,10 +13,14 @@ import serial.tools.list_ports
 from playsound import playsound
 
 from util import MACRO_ITEMS, CustomSerialException, SerialNotFoundException, SerialMountException
-from tkinter import Tk, ttk, messagebox
+from macrodisplay import MacroDisplay
+from tkinter import Tk, messagebox
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 
 DEBUG = True
 RETRY_COUNT = 5
+SECOND_MONITOR = True
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 SERIAL_QRY = "Arduino Leonardo"
@@ -46,7 +51,7 @@ def main():
             print(e)
             messagebox.showerror(title=MSGBOX_TITLE,
                                  message=f"{str(e)}\n\nCheck if you have another instance open?")
-            exit(0)
+            sys.exit(0)
         except CustomSerialException as e:
             print(e)
             do_try_again = messagebox.askyesno(title=MSGBOX_TITLE,
@@ -54,8 +59,8 @@ def main():
             if do_try_again:
                 continue
             else:
-                exit(0)
-            exit(0)
+                sys.exit(0)
+            sys.exit(0)
         except Exception as e:
             print(e)
             raise e
@@ -63,7 +68,19 @@ def main():
         # break if trying succeeds
         break
 
-    main_loop(arduino)
+    window = init_gui()
+
+    # Setup Serial comm thread
+    global thread1
+    # For the close icon in the GUI, stop the thread too
+    global do_close
+    do_close = False
+
+    thread1 = threading.Thread(target=main_loop, args=(
+        arduino, root, window), daemon=True)
+    thread1.start()
+
+    root.mainloop()
 # end main
 
 
@@ -81,7 +98,8 @@ def init_arduino() -> serial.Serial:
         raise SerialNotFoundException(
             f"Failed to load serial port: {SERIAL_QRY}")
 
-    arduino = serial.Serial(port=serial_port, baudrate=SERIAL_BAUD,  timeout=SERIAL_TIMEOUT)
+    arduino = serial.Serial(
+        port=serial_port, baudrate=SERIAL_BAUD,  timeout=SERIAL_TIMEOUT)
     if arduino is None:
         raise SerialMountException(
             f"Failed to mount Serial port: {SERIAL_QRY}")
@@ -90,45 +108,40 @@ def init_arduino() -> serial.Serial:
 # end init_arduino
 
 
-# def init_gui() -> MacroDisplay:
-#     """
-#     Initialize the gui, uses global root var. 
-#     Returns:
-#         MacroDisplay object for GUI
-#     """
-#     global root
-#     root = Tk()
-#     s = ttk.Style()
-#     s.configure('.', font=('Ubuntu-Mono', 16), relief='flat',
-#                 foreground='#cccccc', background='#252525')
-#     s.configure('TFrame', foreground='#ffffff', background='#222222')
+def init_gui() -> MacroDisplay:
+    """
+    Initialize the gui, uses global root var. 
+    Returns:
+        MacroDisplay object for GUI
+    """
+    global root
+    root = ttk.Window(themename="darkly")
+    # main_frame = ttk.Frame(root)
+    # main_frame.pack()
 
-#     main_frame = ttk.Frame(root)
-#     main_frame.pack()
+    macro_display = MacroDisplay(root)
 
-#     macro_display = MacroDisplay(main_frame, "MODE")
+    # root.protocol("WM_DELETE_WINDOW", handle_close)
+    root.iconbitmap(resource_path(ICON_PATH))
+    root.resizable(False, False)
+    root.title("MiniMacroPad")
 
-#     root.protocol("WM_DELETE_WINDOW", handle_close)
-#     root.iconbitmap(resource_path(ICON_PATH))
-#     root.resizable(False, False)
-#     root.title("Keeb")
+    posX = None
+    posY = None
 
-#     posX = None
-#     posY = None
-
-#     # Set window location + size
-#     if SECOND_MONITOR:
-#         posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
-#         posY = root.winfo_screenheight() - int(root.winfo_screenheight() / 2)
-#     else:
-#         posX = int(root.winfo_screenwidth() / 2)
-#         posY = int(root.winfo_screenheight() / 2)
-#     root.geometry(f"475x280+{posX}+{posY}")
-#     return macro_display
-# # end init_gui
+    # Set window location + size
+    if SECOND_MONITOR:
+        posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
+        posY = root.winfo_screenheight() - int(root.winfo_screenheight() / 2)
+    else:
+        posX = int(root.winfo_screenwidth() / 2)
+        posY = int(root.winfo_screenheight() / 2)
+    root.geometry(f"250x200+{posX}+{posY}")
+    return macro_display
+# end init_gui
 
 
-def main_loop(arduino):
+def main_loop(arduino, root, window):
     """
     Handles serial comms
     """
@@ -143,7 +156,7 @@ def main_loop(arduino):
             if len(str(btn_pos)) > 1:
                 btn_pos = int(str(btn_pos)[-1])
             MACRO_ITEMS[btn_pos]["func"](btn_pos)
-        
+
     # end loop
 # end main_loop
 
@@ -171,6 +184,7 @@ def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str
                 return p.name
     return None
 # end load_port
+
 
 if __name__ == "__main__":
     main()
