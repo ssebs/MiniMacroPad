@@ -14,7 +14,7 @@ from playsound import playsound
 from util import MACRO_ITEMS, CustomSerialException, SerialNotFoundException, SerialMountException
 from tkinter import Tk, ttk, messagebox
 
-DEBUG = False
+DEBUG = True
 RETRY_COUNT = 5
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
@@ -139,6 +139,9 @@ def main_loop(arduino):
                 print(data)
             # Do something based on button that was pressed
             btn_pos = int(data) - 1
+            # 11 => 1
+            if len(str(btn_pos)) > 1:
+                btn_pos = int(str(btn_pos)[-1])
             MACRO_ITEMS[btn_pos]["func"](btn_pos)
         
     # end loop

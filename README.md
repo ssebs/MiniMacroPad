@@ -36,3 +36,5 @@ A python driver to provide functionality to the mini macro pad.
   - [ ] Other stuff?
 - [...] JSON customizable actions (or YAML)
   - [ ] EZ edit for these
+
+https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/

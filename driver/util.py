@@ -35,7 +35,10 @@ MACRO_ITEMS = [
     {
         "pos": 3,
         "text": "Startup Folder",
-        "hotkeys": [["win", "r"], ["shell:startup", "enter"]],
+        "hotkeys": [
+            ["win", "r"], 
+            ["shell:startup", "enter"]
+        ],
         "func": send_hotkey
     },
     {
