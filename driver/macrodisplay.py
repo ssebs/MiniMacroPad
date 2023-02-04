@@ -77,9 +77,7 @@ class MacroDisplay(ttk.Frame):
     # end _init_grid
 
     def click(self, pos):
-        print(f"pos: {pos}")
-        old = self.macrogrid[pos]["state"]
-        print(f"old: {old}")
-        self.macrogrid[pos]["state"] = "pressed"
+        print(f"pos: {pos}") 
+        self.macrogrid[pos].configure(bootstyle=PRIMARY)
         time.sleep(.25)
-        self.macrogrid[pos]["state"] = old
+        self.macrogrid[pos].configure(bootstyle=DARK)

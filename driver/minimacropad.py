@@ -156,6 +156,7 @@ def main_loop(arduino, root, window):
             if len(str(btn_pos)) > 1:
                 btn_pos = int(str(btn_pos)[-1])
             MACRO_ITEMS[btn_pos]["func"](btn_pos)
+            window.click(btn_pos + 1)
 
     # end loop
 # end main_loop
