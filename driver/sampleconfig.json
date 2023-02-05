@@ -37,7 +37,18 @@
             "pos": 3,
             "text": "VAL ^",
             "func": "loop_up",
-            "extra": "VALSTRINGS"
+            "extra": "VALSTRINGS",
+            "pre": [
+                [
+                    "shift",
+                    "enter"
+                ]
+            ],
+            "post": [
+                [
+                    "enter"
+                ]
+            ]
         },
         {
             "pos": 4,

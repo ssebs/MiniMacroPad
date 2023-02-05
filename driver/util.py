@@ -2,6 +2,7 @@
 # util.py - Util stuff
 import json
 from enum import Enum
+import random
 from tkinter import ttk
 import pyautogui
 
@@ -9,7 +10,7 @@ import pyautogui
 class Util():
     def __init__(self, config_path: str, verbose=False):
         self.verbose = verbose
-        self.loopers = []
+        self.loopers = {}
 
         self.config = self.load_config(config_path)
         self.buttons = self.config["BUTTONS"]
@@ -42,14 +43,17 @@ class Util():
                         raise Exception(
                             f"Failed to find {btn['extra']} in {self.config['DATA']}")
                     # Get string array from extra variable
-                    tmp_loop = StringLooper(self.config["DATA"][btn['extra']], btn['extra'])
-                    self.loopers.append(tmp_loop)
+                    tmp_loop = StringLooper(
+                        self.config["DATA"][btn['extra']], btn['extra']
+                    )
+                    self.loopers[btn['extra']] = tmp_loop
                 except Exception as e:
                     print("Failed to add looper")
                     raise e
         if self.verbose:
             print("loopers")
-            for l in self.loopers: l.print_str()
+            for l in self.loopers.values():
+                l.print_str()
         # self.loopers.print_str()
 
     def handle_btn_press(self, position: int):
@@ -58,15 +62,23 @@ class Util():
 
         # func_name = self.buttons[position + 1]["func"]
         func_name = None
+        extra = None
         for item in self.buttons:
             if item['pos'] == position:
                 func_name = item["func"]
+                if "extra" in item:
+                    extra = item["extra"]
         if func_name is None:
             raise Exception(f"Unable to find function in pos {position}.")
+
         func = getattr(self, func_name)
-        func(position - 1)
+        if extra is None:
+            func(position - 1)
+        else:
+            func(position - 1, extra)
 
     # Functions below
+
     def send_text(self, idx: int):
         pyautogui.write(self.buttons[idx]["text"])
 
@@ -74,25 +86,43 @@ class Util():
         pyautogui.hotkey('ctrl', 'z')
 
     def send_hotkey(self, idx: int):
-        pass
-        # if "hotkeys" not in MACRO_ITEMS[idx]:
-        #     raise Exception(f"Hotkeys not defined in MACRO_ITEMS[{idx}]")
-        # for keys in MACRO_ITEMS[idx]["hotkeys"]:
-        #     pyautogui.hotkey(*keys)
+        if "hotkeys" not in self.buttons[idx]:
+            raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
 
-    def loop_up(self, idx: int):
-        # pyautogui.write(self.config["DATA"]["VALSTRINGS"][looper.pos])
+        for keys in self.buttons[idx]["hotkeys"]:
+            pyautogui.hotkey(*keys)
+
+    def loop_up(self, idx: int, extra: str):
+        self.loopers[extra].loop_up()
+        
+        #TODO: handle pre
+        if "pre" in self.buttons[idx]:
+            for keys in self.buttons[idx]["pre"]:
+                pyautogui.hotkey(*keys)
+        pyautogui.write(self.loopers[extra].get_str())
+        if "post" in self.buttons[idx]:
+            for keys in self.buttons[idx]["post"]:
+                pyautogui.hotkey(*keys)
+        
+        #TODO: handle post
+
+    def loop_down(self, idx: int, extra: str):
         pass
 
-    def loop_down(self, idx: int):
+    def loop_rand(self, idx: int, extra: str):
         pass
+
 
 class StringLooper():
     def __init__(self, strings: list, name: str):
+        self.strings = strings
         self.name = name
         self.max = len(strings)
         self.min = 0
         self.pos = 0
+
+    def get_str(self):
+        return self.strings[self.pos]
 
     def loop_up(self):
         if self.pos == self.max:
@@ -103,6 +133,9 @@ class StringLooper():
         if self.pos == 0:
             self.pos == self.max
         self.pos -= 1
+
+    def loop_rand(self):
+        self.pos = random.randint(self.min, self.max)
 
     def print_str(self):
         print(f"{self.name} - pos: {self.pos}, min: {self.min}, max: {self.max}")
