@@ -56,22 +56,36 @@ class Util():
         # Util.MACRO_ITEMS[btn_pos]["func"](btn_pos)
         print(f"Pressed: {position}")
 
+        # func_name = self.buttons[position + 1]["func"]
+        func_name = None
+        for item in self.buttons:
+            if item['pos'] == position:
+                func_name = item["func"]
+        if func_name is None:
+            raise Exception(f"Unable to find function in pos {position}.")
+        func = getattr(self, func_name)
+        func(position - 1)
+
     # Functions below
     def send_text(self, idx: int):
-        pyautogui.write(MACRO_ITEMS[idx]["text"])
+        pyautogui.write(self.buttons[idx]["text"])
 
     def send_undo(self, idx: int):
         pyautogui.hotkey('ctrl', 'z')
 
     def send_hotkey(self, idx: int):
-        if "hotkeys" not in MACRO_ITEMS[idx]:
-            raise Exception(f"Hotkeys not defined in MACRO_ITEMS[{idx}]")
-        for keys in MACRO_ITEMS[idx]["hotkeys"]:
-            pyautogui.hotkey(*keys)
+        pass
+        # if "hotkeys" not in MACRO_ITEMS[idx]:
+        #     raise Exception(f"Hotkeys not defined in MACRO_ITEMS[{idx}]")
+        # for keys in MACRO_ITEMS[idx]["hotkeys"]:
+        #     pyautogui.hotkey(*keys)
 
-    def loop_thru_valstrings(self, idx: int):
-        pyautogui.write(VALSTRINGS[looper.pos])
+    def loop_up(self, idx: int):
+        # pyautogui.write(self.config["DATA"]["VALSTRINGS"][looper.pos])
+        pass
 
+    def loop_down(self, idx: int):
+        pass
 
 class StringLooper():
     def __init__(self, strings: list, name: str):
