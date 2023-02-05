@@ -5,7 +5,62 @@ from enum import Enum
 import random
 from tkinter import ttk
 import pyautogui
+import os.path 
 
+class Config():
+    DEFAULT_CONFIG = {
+        "CONFIG": {
+            "SIZE": {"x": 3, "y": 3},
+            "MONITOR": 1,
+            "SERIAL": {
+                "QUERY": "USB Serial Device",
+                "BAUDRATE": 9600,
+                "TIMEOUT":  0.1
+            }
+        },
+        "DATA": {},
+        "BUTTONS": [
+            {
+                "pos": 1,
+                "text": "Test\n",
+                "func": "send_text"
+            },
+        ]
+    }
+
+    def __init__(self, config_path: str = None, verbose: bool = False):
+        self.verbose = verbose
+        self.default_path = os.path.expanduser("~") + "/minimacropad-config.json"
+        self.path = config_path if config_path else self.default_path
+        
+        self.config = self.load_config()["CONFIG"]
+        self.size = self.config["SIZE"]
+        self.monitor = self.config["MONITOR"]
+        self.serial = self.config["SERIAL"]
+    # init
+
+    def load_config(self) -> dict:
+        try:
+            with open(self.path, "r") as f:
+                try:
+                    return json.loads(f.read())
+                except Exception as e:
+                    print(f"Failed to parse JSON from {path} config file.")
+        except FileNotFoundError:
+            self.save_default_config()
+            self.load_config()
+        except Exception as e:
+            print(f"Failed to load {path} config file.")
+            raise e
+    # load_config
+
+    def save_default_config(self):
+        with open(self.path, "w") as f:
+            f.write(json.dumps(self.DEFAULT_CONFIG))
+    # save_default_config
+
+    def get_path(self):
+        return self.path
 
 class Util():
     def __init__(self, config_path: str, verbose=False):
@@ -16,13 +71,9 @@ class Util():
         self.buttons = self.config["BUTTONS"]
 
         self.parse_config()
-
-        # self.val_looper = StringLooper(self.VALSTRINGS)
-        # self.valpu_looper = StringLooper(self.VALPICKUPSTRINGS)
-        pass
     # init
 
-    def load_config(self, path: str):
+    def load_config(self, path: str) -> dict:
         try:
             with open(path, "r") as f:
                 try:
@@ -57,10 +108,14 @@ class Util():
         # self.loopers.print_str()
 
     def handle_btn_press(self, position: int):
-        # Util.MACRO_ITEMS[btn_pos]["func"](btn_pos)
         print(f"Pressed: {position}")
 
-        # func_name = self.buttons[position + 1]["func"]
+        if position > len(self.buttons):
+            print("Hit a button that's not defined in the config file!")
+            print(f"pos: {position} larger than buttons length")
+            print("Doing nothing")
+            return
+        
         func_name = None
         extra = None
         for item in self.buttons:
@@ -71,6 +126,7 @@ class Util():
         if func_name is None:
             raise Exception(f"Unable to find function in pos {position}.")
 
+        # Get func name from string
         func = getattr(self, func_name)
         if extra is None:
             func(position - 1)
@@ -78,7 +134,6 @@ class Util():
             func(position - 1, extra)
 
     # Functions below
-
     def send_text(self, idx: int):
         pyautogui.write(self.buttons[idx]["text"])
 
@@ -99,7 +154,6 @@ class Util():
         self._post(idx)
     # loop_up func from json
 
-
     def loop_down(self, idx: int, extra: str):
         self.loopers[extra].loop_down()
         self._pre(idx)
@@ -114,20 +168,20 @@ class Util():
         self._post(idx)
     # loop_rand func from json
 
-
     def _pre(self, idx: int):
         """Handle pre commands"""
         if "pre" in self.buttons[idx]:
             for keys in self.buttons[idx]["pre"]:
                 pyautogui.hotkey(*keys)
     # _pre
-    
+
     def _post(self, idx: int):
         """Handle post commands"""
         if "post" in self.buttons[idx]:
             for keys in self.buttons[idx]["post"]:
                 pyautogui.hotkey(*keys)
     # _post
+
 
 class StringLooper():
     def __init__(self, strings: list, name: str):
@@ -168,31 +222,3 @@ class SerialNotFoundException(CustomSerialException):
 
 class SerialMountException(CustomSerialException):
     pass
-
-
-class MyLabel(ttk.Frame):
-    '''inherit from Frame to make a label with customized border'''
-
-    def __init__(self, parent, myborderwidth=0, color=None,
-                 myborderplace='center', *args, **kwargs):
-        s = ttk.Style()
-        s.configure('TFrame', background=color)
-        self.frame = ttk.Frame.__init__(self, parent)
-        self.propagate(False)  # prevent frame from auto-fitting to contents
-        self.label = ttk.Label(self.frame, *args, **kwargs)  # make the label
-
-        # pack label inside frame according to which side the border
-        # should be on. If it's not 'left' or 'right', center the label
-        # and multiply the border width by 2 to compensate
-        if myborderplace == 'left':
-            self.label.pack(side=RIGHT)
-        elif myborderplace == 'right':
-            self.label.pack(side=LEFT)
-        else:
-            self.label.pack()
-            myborderwidth = myborderwidth * 2
-
-        # set width and height of frame according to the req width
-        # and height of the label
-        self.config(width=self.label.winfo_reqwidth() + myborderwidth)
-        self.config(height=self.label.winfo_reqheight())

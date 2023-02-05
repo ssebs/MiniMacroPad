@@ -12,14 +12,14 @@ import serial.tools.list_ports
 
 from playsound import playsound
 
-from util import Util, CustomSerialException, SerialNotFoundException, SerialMountException
+from util import Util, Config, CustomSerialException, SerialNotFoundException, SerialMountException
 from macrodisplay import MacroDisplay
 from tkinter import Tk, messagebox
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-import os.path 
 
-DEBUG = False
+
+DEBUG = True
 RETRY_COUNT = 5
 SECOND_MONITOR = False
 ICON_PATH = 'bell.ico'
@@ -45,9 +45,14 @@ def main():
     """
     if DEBUG:
         print("Driver for macro pad:")
+
+    # Load json Config
+    config = Config(config_path="./driver/sampleconfig.json", verbose=DEBUG)
+
+    # Load arduino serial connection
     for tries in range(RETRY_COUNT):
         try:
-            arduino = init_arduino()
+            arduino = init_arduino(config)
             # macro_display = init_gui()  # sets global root, returns MacroDisplay
         except serial.SerialException as e:
             print(e)
@@ -69,26 +74,11 @@ def main():
             sys.exit(1)
         # break if trying succeeds
         break
-    
-    # Load json config
-    config_path = None
-    dev_path = './sampleconfig.json'
 
-    home = os.path.expanduser("~")
-    user_path = f"{home}/minimacropad-config.json"
+    # Setup Util class
+    util = Util(config.get_path(), verbose=DEBUG)
 
-    if os.path.exists(user_path):
-        config_path = user_path
-    elif os.path.exists(dev_path):
-        config_path = dev_path
-    else:
-        messagebox.showerror(title=MSGBOX_TITLE,
-                                 message=f"No minimacropad-config.json file found in {home}! Create one, follow the readme.")
-
-    util = Util(config_path, verbose=DEBUG)
-
-    window = init_gui(util)
-
+    window = init_gui(util, config)
 
     # Setup Serial comm thread
     global thread1
@@ -104,7 +94,7 @@ def main():
 # end main
 
 
-def init_arduino() -> serial.Serial:
+def init_arduino(config: Config) -> serial.Serial:
     """
     Initialize serial COM port and return it. Uses SERIAL_QRY to find the port 
     Returns:
@@ -112,23 +102,24 @@ def init_arduino() -> serial.Serial:
     """
     # what my PC says the teensy LC is called, could use COM7 but that could change
     signal.signal(signal.SIGINT, signal.default_int_handler)
-    serial_port = load_port(SERIAL_QRY, False, DEBUG)
+    serial_port = load_port(
+        name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG)
 
     if serial_port is None:
         raise SerialNotFoundException(
-            f"Failed to load serial port: {SERIAL_QRY}")
+            f"Failed to load serial port: {config.serial['QUERY']}")
 
-    arduino = serial.Serial(
-        port=serial_port, baudrate=SERIAL_BAUD,  timeout=SERIAL_TIMEOUT)
+    arduino = serial.Serial(port=serial_port, baudrate=config.serial["BAUDRATE"],
+                            timeout=config.serial["TIMEOUT"])
     if arduino is None:
         raise SerialMountException(
-            f"Failed to mount Serial port: {SERIAL_QRY}")
+            f"Failed to mount Serial port: {config.serial['QUERY']}")
 
     return arduino
 # end init_arduino
 
 
-def init_gui(util: Util) -> MacroDisplay:
+def init_gui(util: Util, config: Config) -> MacroDisplay:
     """
     Initialize the gui, uses global root var. 
     Returns:
@@ -136,13 +127,8 @@ def init_gui(util: Util) -> MacroDisplay:
     """
     global root
     root = ttk.Window(themename="darkly")
-    # main_frame = ttk.Frame(root)
-    # main_frame.pack()
-
-    smol_grid = {"x": 2, "y": 3}
-    big_grid = {"x": 3, "y": 4}
-
-    macro_display = MacroDisplay(root, grid_size=big_grid, macro_items=util.buttons)
+    macro_display = MacroDisplay(
+        root, grid_size=config.size, macro_items=util.buttons)
 
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
@@ -177,7 +163,7 @@ def main_loop(arduino, root, window, util: Util):
                 if DEBUG:
                     print(data)
 
-            if ":" not in data:    
+            if ":" not in data:
                 # Do something based on button that was pressed
                 btn_pos = int(data)
                 if btn_pos > len(util.buttons):
@@ -194,7 +180,7 @@ def main_loop(arduino, root, window, util: Util):
 
 def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
     """
-    Gets the COM port as a str that the teensy is connected to
+    Gets the COM port as a str that the arduino is connected to
     params:
         name - name of what you want to match (e.g. COM1)
         is_COM_name - is this a COM name or description? (e.g. COM1 vs USB Serial Device (COM1))
@@ -216,6 +202,7 @@ def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str
     return None
 # end load_port
 
+
 def handle_close():
     """
     Handles the close button operation, cleanup stuff
@@ -230,6 +217,7 @@ def handle_close():
         sys.exit(0)
     # stop thread1
 # end handle_close
+
 
 if __name__ == "__main__":
     main()
