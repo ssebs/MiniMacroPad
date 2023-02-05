@@ -5,7 +5,6 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 import time
-from util import MACRO_ITEMS, MyLabel
 
 
 class MacroDisplay(ttk.Frame):
@@ -19,12 +18,13 @@ class MacroDisplay(ttk.Frame):
         update_mode - update the mode and rebuild grid with new data. Cross references MACRO_ITEMS
     """
 
-    def __init__(self, container: Tk, grid_size: dict, **options):
+    def __init__(self, container: Tk, grid_size: dict, macro_items: list, **options):
         """
         Constructor. Expects TK container, and grid_size like {"x": 2, "y": 3}
         """
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
+        self.macro_items = macro_items
         self.truncate_length = 28
         self.container = container
         self.title = StringVar(value="<>")
@@ -49,7 +49,7 @@ class MacroDisplay(ttk.Frame):
     def _init_grid(self, verbose: bool = False) -> dict:
         # TODO add option for val strings
         """
-        Initializes the grid using self.mode's value cross referenced with MACRO_ITEMS' items
+        Initializes the grid using self.mode's value cross referenced with self.macro_items' items
         Params:
             verbose - bool [False] add verbosity
         Returns:
@@ -60,10 +60,11 @@ class MacroDisplay(ttk.Frame):
         # r = self.size["y"]
         r = 1
         c = 0
-        for item in MACRO_ITEMS:
+        for item in self.macro_items:
             if verbose:
-                print(f"{item['text']} - r: {r}, c: {c}")
+                print(f"{item['text'].strip()} - r: {r}, c: {c}")
 
+            print(item)
             grid[item['pos']] = ttk.Button(
                 self.container, text=item['text'].strip(), bootstyle=(DARK))
 

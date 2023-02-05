@@ -1,0 +1,95 @@
+{
+    "DATA": {
+        "VALSTRINGS": [
+            "Sheeeeeeeeeeeeeeeeeeeeeeeeesh",
+            "You were a boulder. I am a mountain!",
+            "How did every piece of trash end up on the same team?",
+            "Just some good old hard yakka, standing in between us and victory.",
+            "Oi! I'm pissed!",
+            "Bloinded",
+            "I am on a higher plane, chale, literally!",
+            "Activating kill mode. That's a joke. Kill mode is default.",
+            "Buy stuff, kaching, lil' skkkrrrr, then we're done, yeah?",
+            "Yo!    Nice.",
+            "Sheee-achoo!-eeesh!"
+        ],
+        "VALPUSTRINGS": [
+            "Are you Cypher? Because I'd give you my corpse.",
+            "Are you killjoy? Because i want you to detain me.",
+            "Are you Viper? Because your toxicity has me addicted.",
+            "I wish I were Omen because I want to teleport into your bed tonight.",
+            "You must be be Reyna, because you are sucking more than just my soul."
+        ]
+    },
+    "BUTTONS": [
+        {
+            "pos": 1,
+            "text": "VAL v",
+            "func": "loop_down",
+            "extra": "VALSTRINGS"
+        },
+        {
+            "pos": 2,
+            "text": "Foo\n",
+            "func": "send_text"
+        },
+        {
+            "pos": 3,
+            "text": "VAL ^",
+            "func": "loop_up",
+            "extra": "VALSTRINGS"
+        },
+        {
+            "pos": 4,
+            "text": "Startup Folder",
+            "hotkeys": [
+                [
+                    "win",
+                    "r"
+                ],
+                [
+                    "shell:startup",
+                    "enter"
+                ]
+            ],
+            "func": "send_hotkey"
+        },
+        {
+            "pos": 5,
+            "text": "Undo",
+            "hotkeys": [
+                [
+                    "ctrl",
+                    "z"
+                ]
+            ],
+            "func": "send_hotkey"
+        },
+        {
+            "pos": 6,
+            "text": "Pickup",
+            "func": "loop_rand",
+            "extra": "VALPUSTRINGS"
+        },
+        {
+            "pos": 7,
+            "text": "TEST 7\n",
+            "func": "send_text"
+        },
+        {
+            "pos": 8,
+            "text": "TEST 8\n",
+            "func": "send_text"
+        },
+        {
+            "pos": 9,
+            "text": "TEST 9\n",
+            "func": "send_text"
+        },
+        {
+            "pos": 10,
+            "text": "TEST 10\n",
+            "func": "send_text"
+        }
+    ]
+}

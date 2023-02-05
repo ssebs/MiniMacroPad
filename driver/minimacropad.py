@@ -12,7 +12,7 @@ import serial.tools.list_ports
 
 from playsound import playsound
 
-from util import MACRO_ITEMS, CustomSerialException, SerialNotFoundException, SerialMountException
+from util import Util, CustomSerialException, SerialNotFoundException, SerialMountException
 from macrodisplay import MacroDisplay
 from tkinter import Tk, messagebox
 import ttkbootstrap as ttk
@@ -68,8 +68,10 @@ def main():
             sys.exit(1)
         # break if trying succeeds
         break
+    util = Util('./sampleconfig.json', verbose=True)
 
-    window = init_gui()
+    window = init_gui(util)
+
 
     # Setup Serial comm thread
     global thread1
@@ -78,7 +80,7 @@ def main():
     do_close = False
 
     thread1 = threading.Thread(target=main_loop, args=(
-        arduino, root, window), daemon=True)
+        arduino, root, window, util), daemon=True)
     thread1.start()
 
     root.mainloop()
@@ -109,7 +111,7 @@ def init_arduino() -> serial.Serial:
 # end init_arduino
 
 
-def init_gui() -> MacroDisplay:
+def init_gui(util: Util) -> MacroDisplay:
     """
     Initialize the gui, uses global root var. 
     Returns:
@@ -123,7 +125,7 @@ def init_gui() -> MacroDisplay:
     smol_grid = {"x": 2, "y": 3}
     big_grid = {"x": 3, "y": 4}
 
-    macro_display = MacroDisplay(root, grid_size=big_grid)
+    macro_display = MacroDisplay(root, grid_size=big_grid, macro_items=util.buttons)
 
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
@@ -140,12 +142,12 @@ def init_gui() -> MacroDisplay:
     else:
         posX = int(root.winfo_screenwidth() / 2)
         posY = int(root.winfo_screenheight() / 2)
-    root.geometry(f"250x200+{posX}+{posY}")
+    root.geometry(f"400x300+{posX}+{posY}")
     return macro_display
 # end init_gui
 
 
-def main_loop(arduino, root, window):
+def main_loop(arduino, root, window, util: Util):
     """
     Handles serial comms
     """
@@ -160,12 +162,14 @@ def main_loop(arduino, root, window):
 
             if ":" not in data:    
                 # Do something based on button that was pressed
-                btn_pos = int(data) - 1
-                # 11 => 1
-                if len(str(btn_pos)) > 1:
-                    btn_pos = int(str(btn_pos)[-1])
-                MACRO_ITEMS[btn_pos]["func"](btn_pos)
-                window.click(btn_pos + 1)
+                btn_pos = int(data)
+                if btn_pos > len(util.buttons):
+                    # 11 => 1
+                    if len(str(btn_pos)) > 1:
+                        btn_pos = int(str(btn_pos)[-1])
+                util.handle_btn_press(btn_pos)
+                # Util.MACRO_ITEMS[btn_pos]["func"](btn_pos)
+                window.click(btn_pos)
 
     # end loop
 # end main_loop
