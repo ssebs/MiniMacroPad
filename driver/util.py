@@ -11,6 +11,7 @@ class Config():
     DEFAULT_CONFIG = {
         "CONFIG": {
             "SIZE": {"x": 3, "y": 3},
+            "GUI_SIZE": "300x300",
             "MONITOR": 1,
             "SERIAL": {
                 "QUERY": "USB Serial Device",
@@ -45,12 +46,12 @@ class Config():
                 try:
                     return json.loads(f.read())
                 except Exception as e:
-                    print(f"Failed to parse JSON from {path} config file.")
+                    print(f"Failed to parse JSON from {self.path} config file.")
         except FileNotFoundError:
             self.save_default_config()
-            self.load_config()
+            return self.load_config()
         except Exception as e:
-            print(f"Failed to load {path} config file.")
+            print(f"Failed to load {self.path} config file.")
             raise e
     # load_config
 

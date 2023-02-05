@@ -47,7 +47,8 @@ def main():
         print("Driver for macro pad:")
 
     # Load json Config
-    config = Config(config_path="./driver/sampleconfig.json", verbose=DEBUG)
+    # config = Config(config_path="./driver/sampleconfig.json", verbose=DEBUG)
+    config = Config(verbose=DEBUG)
 
     # Load arduino serial connection
     for tries in range(RETRY_COUNT):
@@ -137,7 +138,6 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
 
     posX = None
     posY = None
-
     # Set window location + size
     if SECOND_MONITOR:
         posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
@@ -145,7 +145,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     else:
         posX = int(root.winfo_screenwidth() / 2)
         posY = int(root.winfo_screenheight() / 2)
-    root.geometry(f"400x300+{posX}+{posY}")
+    root.geometry(f"{config.config['GUI_SIZE']}+{posX}+{posY}")
     return macro_display
 # end init_gui
 
