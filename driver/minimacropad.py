@@ -19,7 +19,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 
-DEBUG = True
+DEBUG = False
 RETRY_COUNT = 5
 SECOND_MONITOR = False
 ICON_PATH = 'bell.ico'
@@ -129,7 +129,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     global root
     root = ttk.Window(themename="darkly")
     macro_display = MacroDisplay(
-        root, grid_size=config.size, macro_items=util.buttons)
+        root, grid_size=config.size, macro_items=util.buttons, util=util, verbose=DEBUG)
 
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
