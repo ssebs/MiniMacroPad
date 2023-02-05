@@ -28,6 +28,109 @@ A python driver to provide functionality to the mini macro pad.
 - `pyinstaller minimacropad.spec`
     - Built file is under `./dist/`
 
+## Config file
+You'll need to create a config file that controls the macro pad. This will be saved in your `home directory/minimacropad-config.json`
+  - Windows:
+    - `C:\Users\<username>\minimacropad-config.json`
+  - *nix:
+    - `~/minimacropad-config.json`
+
+There's an expected format for this file:
+- A `DATA` object where you can add lists of strings that you may want to use.
+  - Like: `"DATA": { "ARR_NAME": ["value1", "value2"] }`
+- A `BUTTONS` object where you'll need the following attributes:
+  - `pos`
+    - int, position of the button. idx + 1 basically
+  - `text`
+    - string, text to render or send depending on function
+  - `func`
+
+
+Example below:
+```json
+{
+  "DATA": {
+    "FRUITS": [
+      "banana",
+      "apple",
+      "orange"
+    ],
+    "NAMES": [
+      "Sebastian",
+      "Tom",
+      "Bob"
+    ]
+  },
+  "BUTTONS": [
+    {
+      "pos": 1,
+      "text": "Fruit down",
+      "func": "loop_down",
+      "extra": "FRUITS",
+      "pre": [
+          [
+              "shift",
+              "enter"
+          ]
+      ],
+      "post": [
+          [
+              "enter"
+          ]
+      ]
+    },
+    {
+      "pos": 2,
+      "text": "Foo\n",
+      "func": "send_text"
+    },
+    {
+      "pos": 3,
+      "text": "Fruit up",
+      "func": "loop_up",
+      "extra": "FRUITS",
+      "post": [
+          [
+              "enter"
+          ]
+      ]
+    },
+    {
+      "pos": 4,
+      "text": "Startup Folder",
+      "hotkeys": [
+          [
+              "win",
+              "r"
+          ],
+          [
+              "shell:startup",
+              "enter"
+          ]
+      ],
+      "func": "send_hotkey"
+    },
+    {
+      "pos": 5,
+      "text": "Undo",
+      "hotkeys": [
+          [
+              "ctrl",
+              "z"
+          ]
+      ],
+      "func": "send_hotkey"
+    },
+    {
+      "pos": 6,
+      "text": "Rand Name",
+      "func": "loop_rand",
+      "extra": "NAMES"
+    },
+  ]
+}
+```
+
 ## TODO:
 - [x] Make driver work
 - [x] Functional actions / macros
@@ -35,6 +138,11 @@ A python driver to provide functionality to the mini macro pad.
   - [ ] Mouse macros
   - [ ] Other stuff?
 - [...] JSON customizable actions (or YAML)
+  - [ ] make this save / load to ~/minimacropad-config.json
   - [ ] EZ edit for these
+- [ ] new GUI
+- [ ] support multiple pads (in config at least)
+- [ ] support multiple pages of stuff
+- [ ] support delays in macros
 
 https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/

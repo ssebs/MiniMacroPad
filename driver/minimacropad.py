@@ -17,10 +17,11 @@ from macrodisplay import MacroDisplay
 from tkinter import Tk, messagebox
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+import os.path 
 
-DEBUG = True
+DEBUG = False
 RETRY_COUNT = 5
-SECOND_MONITOR = True
+SECOND_MONITOR = False
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
@@ -68,7 +69,23 @@ def main():
             sys.exit(1)
         # break if trying succeeds
         break
-    util = Util('./sampleconfig.json', verbose=True)
+    
+    # Load json config
+    config_path = None
+    dev_path = './sampleconfig.json'
+
+    home = os.path.expanduser("~")
+    user_path = f"{home}/minimacropad-config.json"
+
+    if os.path.exists(user_path):
+        config_path = user_path
+    elif os.path.exists(dev_path):
+        config_path = dev_path
+    else:
+        messagebox.showerror(title=MSGBOX_TITLE,
+                                 message=f"No minimacropad-config.json file found in {home}! Create one, follow the readme.")
+
+    util = Util(config_path, verbose=DEBUG)
 
     window = init_gui(util)
 

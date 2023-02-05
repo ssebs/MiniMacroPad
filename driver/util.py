@@ -94,24 +94,40 @@ class Util():
 
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
-        
-        #TODO: handle pre
+        self._pre(idx)
+        pyautogui.write(self.loopers[extra].get_str())
+        self._post(idx)
+    # loop_up func from json
+
+
+    def loop_down(self, idx: int, extra: str):
+        self.loopers[extra].loop_down()
+        self._pre(idx)
+        pyautogui.write(self.loopers[extra].get_str())
+        self._post(idx)
+    # loop_down func from json
+
+    def loop_rand(self, idx: int, extra: str):
+        self.loopers[extra].loop_rand()
+        self._pre(idx)
+        pyautogui.write(self.loopers[extra].get_str())
+        self._post(idx)
+    # loop_rand func from json
+
+
+    def _pre(self, idx: int):
+        """Handle pre commands"""
         if "pre" in self.buttons[idx]:
             for keys in self.buttons[idx]["pre"]:
                 pyautogui.hotkey(*keys)
-        pyautogui.write(self.loopers[extra].get_str())
+    # _pre
+    
+    def _post(self, idx: int):
+        """Handle post commands"""
         if "post" in self.buttons[idx]:
             for keys in self.buttons[idx]["post"]:
                 pyautogui.hotkey(*keys)
-        
-        #TODO: handle post
-
-    def loop_down(self, idx: int, extra: str):
-        pass
-
-    def loop_rand(self, idx: int, extra: str):
-        pass
-
+    # _post
 
 class StringLooper():
     def __init__(self, strings: list, name: str):

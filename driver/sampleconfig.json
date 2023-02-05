@@ -1,17 +1,18 @@
 {
     "DATA": {
         "VALSTRINGS": [
-            "Sheeeeeeeeeeeeeeeeeeeeeeeeesh",
             "You were a boulder. I am a mountain!",
             "How did every piece of trash end up on the same team?",
             "Just some good old hard yakka, standing in between us and victory.",
             "Oi! I'm pissed!",
+            "Yo!    Nice.",
             "Bloinded",
             "I am on a higher plane, chale, literally!",
+            "Sheeeeeeeeeeeeeeeeeeeeeeeeesh",
             "Activating kill mode. That's a joke. Kill mode is default.",
             "Buy stuff, kaching, lil' skkkrrrr, then we're done, yeah?",
-            "Yo!    Nice.",
-            "Sheee-achoo!-eeesh!"
+            "Sheee-achoo!-eeesh!",
+            "Don't mess with this Baiana!"
         ],
         "VALPUSTRINGS": [
             "Are you Cypher? Because I'd give you my corpse.",
@@ -19,6 +20,11 @@
             "Are you Viper? Because your toxicity has me addicted.",
             "I wish I were Omen because I want to teleport into your bed tonight.",
             "You must be be Reyna, because you are sucking more than just my soul."
+        ],
+        "GGS": [
+            "gg",
+            "ggwp",
+            "ggez"
         ]
     },
     "BUTTONS": [
@@ -26,7 +32,18 @@
             "pos": 1,
             "text": "VAL v",
             "func": "loop_down",
-            "extra": "VALSTRINGS"
+            "extra": "VALSTRINGS",
+            "pre": [
+                [
+                    "shift",
+                    "enter"
+                ]
+            ],
+            "post": [
+                [
+                    "enter"
+                ]
+            ]
         },
         {
             "pos": 2,
