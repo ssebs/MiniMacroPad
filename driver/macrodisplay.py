@@ -63,8 +63,8 @@ class MacroDisplay(ttk.Frame):
         for item in self.macro_items:
             if verbose:
                 print(f"{item['text'].strip()} - r: {r}, c: {c}")
+                print(item)
 
-            print(item)
             grid[item['pos']] = ttk.Button(
                 self.container, text=item['text'].strip(), bootstyle=(DARK))
 
@@ -80,8 +80,9 @@ class MacroDisplay(ttk.Frame):
         return grid
     # end _init_grid
 
-    def click(self, pos):
-        print(f"pos: {pos}") 
+    def click(self, pos: int, verbose: bool = False):
+        if verbose:
+            print(f"pos: {pos}") 
         self.macrogrid[pos].configure(bootstyle=PRIMARY)
         time.sleep(.25)
         self.macrogrid[pos].configure(bootstyle=DARK)
