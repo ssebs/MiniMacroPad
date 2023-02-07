@@ -70,7 +70,7 @@ def main():
         break
 
     # Setup Util class
-    util = Util(config.get_path(), verbose=DEBUG)
+    util = Util(config, verbose=DEBUG)
 
     window = init_gui(util, config)
 
@@ -122,7 +122,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     global root
     root = ttk.Window(themename="darkly")
     macro_display = MacroDisplay(
-        root, grid_size=config.config["SIZE"], macro_items=util.buttons, util=util, verbose=DEBUG)
+        root, grid_size=config.config["SIZE"], macro_items=config.buttons, util=util, verbose=DEBUG)
 
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
@@ -165,7 +165,7 @@ def main_loop(arduino, root, window, util: Util):
             if ":" not in data:
                 # Do something based on button that was pressed
                 btn_pos = int(data)
-                if btn_pos > len(util.buttons):
+                if btn_pos > len(util.config.buttons):
                     # 11 => 1
                     if len(str(btn_pos)) > 1:
                         btn_pos = int(str(btn_pos)[-1])

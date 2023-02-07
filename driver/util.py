@@ -10,6 +10,10 @@ from enum import Enum
 
 
 class Config():
+    """Config class
+    Handles config files + loading up the json.
+    Config is accessible via <configObject>.config["KEY"]
+    """
 
     def __init__(self, config_path: str = None, verbose: bool = False):
         self.verbose = verbose
@@ -55,6 +59,7 @@ class Config():
     # load_config
 
     def save_default_config(self):
+        """Saves sampleconfig.json to default directory"""
         _config = None
         try:
             with open(self.default_config_path, "r") as f:
@@ -78,57 +83,54 @@ class Config():
 
     def get_path(self):
         return self.path
+    # get_path
+
+# Config class
 
 
 class Util():
-    def __init__(self, config_path: str, verbose=False):
+    # TODO: Rename this, this is the worst possible name for this kind of thing
+    # i mean, it's not even static or anything
+    # devs pls
+    def __init__(self, config: Config, verbose=False):
         self.verbose = verbose
-        self.loopers = {}
-
-        self.config = self.load_config(config_path)
-        self.buttons = self.config["BUTTONS"]
-
-        self.parse_config()
+        self.config = config
+        self.loopers = self.parse_loopers()
     # init
 
-    def load_config(self, path: str) -> dict:
-        try:
-            with open(path, "r") as f:
-                try:
-                    return json.loads(f.read())
-                except Exception as e:
-                    print(f"Failed to parse JSON from {path} config file.")
-        except Exception as e:
-            print(f"Failed to load {path} config file.")
-            raise e
-    # load_config
-
-    def parse_config(self):
-        for btn in self.buttons:
+    def parse_loopers(self) -> dict:
+        """parse json to create string loopers"""
+        _looper = {}
+        for btn in self.config.buttons:
             if "extra" in btn:
                 try:
                     # If the string array name is not in data
-                    if btn["extra"] not in self.config["DATA"]:
+                    if btn["extra"] not in self.config.data:
                         raise Exception(
-                            f"Failed to find {btn['extra']} in {self.config['DATA']}")
+                            f"Failed to find {btn['extra']} in {self.config.data}")
                     # Get string array from extra variable
                     tmp_loop = StringLooper(
-                        self.config["DATA"][btn['extra']], btn['extra']
+                        self.config.data[btn['extra']], btn['extra']
                     )
-                    self.loopers[btn['extra']] = tmp_loop
+                    # Add to dict
+                    _looper[btn['extra']] = tmp_loop
+
                 except Exception as e:
                     print("Failed to add looper")
                     raise e
+
         if self.verbose:
             print("loopers")
-            for looper in self.loopers.values():
+            for looper in _looper.values():
                 looper.print_str()
-        # self.loopers.print_str()
+
+        # Return new dict
+        return _looper
 
     def handle_btn_press(self, position: int):
         print(f"Pressed: {position}")
 
-        if position > len(self.buttons):
+        if position > len(self.config.buttons):
             print("Hit a button that's not defined in the config file!")
             print(f"pos: {position} larger than buttons length")
             print("Doing nothing")
@@ -136,7 +138,7 @@ class Util():
 
         func_name = None
         extra = None
-        for item in self.buttons:
+        for item in self.config.buttons:
             if item['pos'] == position:
                 func_name = item["func"]
                 if "extra" in item:
@@ -153,13 +155,13 @@ class Util():
 
     # Functions below
     def send_text(self, idx: int):
-        pyautogui.write(self.buttons[idx]["text"])
+        pyautogui.write(self.config.buttons[idx]["text"])
 
     def send_hotkey(self, idx: int):
-        if "hotkeys" not in self.buttons[idx]:
+        if "hotkeys" not in self.config.buttons[idx]:
             raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
 
-        for keys in self.buttons[idx]["hotkeys"]:
+        for keys in self.config.buttons[idx]["hotkeys"]:
             pyautogui.hotkey(*keys)
 
     def loop_up(self, idx: int, extra: str):
@@ -186,15 +188,15 @@ class Util():
 
     def _pre(self, idx: int):
         """Handle pre commands"""
-        if "pre" in self.buttons[idx]:
-            for keys in self.buttons[idx]["pre"]:
+        if "pre" in self.config.buttons[idx]:
+            for keys in self.config.buttons[idx]["pre"]:
                 pyautogui.hotkey(*keys)
     # _pre
 
     def _post(self, idx: int):
         """Handle post commands"""
-        if "post" in self.buttons[idx]:
-            for keys in self.buttons[idx]["post"]:
+        if "post" in self.config.buttons[idx]:
+            for keys in self.config.buttons[idx]["post"]:
                 pyautogui.hotkey(*keys)
     # _post
 

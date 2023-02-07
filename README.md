@@ -64,92 +64,7 @@ There's an expected format for this file:
     - string, extra metadata that may be required.
     - Example is name of the list of strings that will be used to loop thru
 
-> See the example below for clarification / usage
-> 
-Example below:
-```json
-{
-  "DATA": {
-    "FRUITS": [
-      "banana",
-      "apple",
-      "orange"
-    ],
-    "NAMES": [
-      "Sebastian",
-      "Tom",
-      "Bob"
-    ]
-  },
-  "BUTTONS": [
-    {
-      "pos": 1,
-      "text": "Fruit down",
-      "func": "loop_down",
-      "extra": "FRUITS",
-      "pre": [
-          [
-              "shift",
-              "enter"
-          ]
-      ],
-      "post": [
-          [
-              "enter"
-          ]
-      ]
-    },
-    {
-      "pos": 2,
-      "text": "Foo\n",
-      "func": "send_text"
-    },
-    {
-      "pos": 3,
-      "text": "Fruit up",
-      "func": "loop_up",
-      "extra": "FRUITS",
-      "post": [
-          [
-              "enter"
-          ]
-      ]
-    },
-    {
-      "pos": 4,
-      "text": "Startup Folder",
-      "hotkeys": [
-          [
-              "win",
-              "r"
-          ],
-          [
-              "shell:startup",
-              "enter"
-          ]
-      ],
-      "func": "send_hotkey"
-    },
-    {
-      "pos": 5,
-      "text": "Undo",
-      "hotkeys": [
-          [
-              "ctrl",
-              "z"
-          ]
-      ],
-      "func": "send_hotkey"
-    },
-    {
-      "pos": 6,
-      "text": "Rand Name",
-      "func": "loop_rand",
-      "extra": "NAMES"
-    },
-  ]
-}
-```
+> See ./driver/res/sampleconfig.json for detailed example
 
 ## TODO:
 - [x] Make driver work
@@ -174,4 +89,7 @@ Example below:
 - [ ] support audio stuff
   - [ ] i.e. soundboard and hold press to talk at the same time
 
-https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
+## Tech Debt
+- [ ] Stop using `pos` variable
+- [ ] Some testing?
+- [ ] ...
