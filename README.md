@@ -104,4 +104,4 @@ There's an expected format for this file:
 - [x] support multiple pads (in config at least)
 
 ## LICENSE
-(./LICENSE)[GPLv3]
+[GPL v3](./LICENSE)
