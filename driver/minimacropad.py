@@ -23,13 +23,12 @@ from util import (
 )
 
 DEBUG = False
-RETRY_COUNT = 5
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
-SERIAL_QRY = "USB Serial Device (COM7)"
-SERIAL_BAUD = 9600
-SERIAL_TIMEOUT = 0.1
+# SERIAL_QRY = "USB Serial Device (COM7)"
+# SERIAL_BAUD = 9600
+# SERIAL_TIMEOUT = 0.1
 MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
 
 
@@ -45,7 +44,7 @@ def main():
     config = Config(verbose=DEBUG)
 
     # Load arduino serial connection
-    for tries in range(RETRY_COUNT):
+    for tries in range(config.config["RETRY_COUNT"]):
         try:
             arduino = init_arduino(config)
             # macro_display = init_gui()  # sets global root, returns MacroDisplay
@@ -123,7 +122,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     global root
     root = ttk.Window(themename="darkly")
     macro_display = MacroDisplay(
-        root, grid_size=config.size, macro_items=util.buttons, util=util, verbose=DEBUG)
+        root, grid_size=config.config["SIZE"], macro_items=util.buttons, util=util, verbose=DEBUG)
 
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))

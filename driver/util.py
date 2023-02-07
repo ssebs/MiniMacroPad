@@ -10,36 +10,24 @@ from enum import Enum
 
 
 class Config():
-    DEFAULT_CONFIG = {
-        "CONFIG": {
-            "SIZE": {"x": 3, "y": 3},
-            "GUI_SIZE": "300x300",
-            "MONITOR": 1,
-            "SERIAL": {
-                "QUERY": "USB Serial Device",
-                "BAUDRATE": 9600,
-                "TIMEOUT": 0.1
-            }
-        },
-        "DATA": {},
-        "BUTTONS": [
-            {
-                "pos": 1,
-                "text": "Test\n",
-                "func": "send_text"
-            },
-        ]
-    }
 
     def __init__(self, config_path: str = None, verbose: bool = False):
         self.verbose = verbose
+        self.default_config_path = "./driver/res/sampleconfig.json"
+
+        # If config_path is defined, use it otherwise use default path
         self.default_path = os.path.expanduser(
             "~") + "/minimacropad-config.json"
         self.path = config_path if config_path else self.default_path
 
-        self.config = self.load_config()["CONFIG"]
-        self.size = self.config["SIZE"]
-        self.monitor = self.config["MONITOR"]
+        # Load JSON config from path, write default if nothing is found
+        self.full_config = self.load_config()
+
+        # Shortcuts
+        self.config = self.full_config["CONFIG"]
+        self.buttons = self.full_config["BUTTONS"]
+        self.data = self.full_config["DATA"]
+
         self.serial = self.config["SERIAL"]
     # init
 
@@ -49,11 +37,17 @@ class Config():
                 try:
                     return json.loads(f.read())
                 except Exception as e:
-                    print(
-                        f"Failed to parse JSON from {self.path} config file.")
+                    msg = f"Failed to parse JSON from {self.path} config file."
+                    print(msg)
+                    raise e
         except FileNotFoundError:
-            self.save_default_config()
-            return self.load_config()
+            if self.default_config_path == self.path:
+                self.save_default_config()
+                return self.load_config()
+            else:
+                msg = f"Failed to find {self.path} config file. Remove this param or create the file"
+                print(msg)
+                raise Exception(msg)
         except Exception as e:
             print(f"Failed to load {self.path} config file.")
             raise e
@@ -193,7 +187,7 @@ class StringLooper():
     def __init__(self, strings: list, name: str):
         self.strings = strings
         self.name = name
-        self.max = len(strings)
+        self.max = len(strings) - 1
         self.min = 0
         self.pos = 0
 
@@ -201,13 +195,15 @@ class StringLooper():
         return self.strings[self.pos]
 
     def loop_up(self):
-        if self.pos == self.max:
+        if self.pos >= self.max:
             self.pos = 0
+            return
         self.pos += 1
 
     def loop_down(self):
-        if self.pos == 0:
-            self.pos == self.max
+        if self.pos <= 0:
+            self.pos = self.max
+            return
         self.pos -= 1
 
     def loop_rand(self):

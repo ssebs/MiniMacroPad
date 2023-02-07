@@ -1,0 +1,58 @@
+{
+    "CONFIG": {
+        "SIZE": {
+            "x": 3,
+            "y": 3
+        },
+        "GUI_SIZE": "400x300",
+        "MONITOR": 1,
+        "SERIAL": {
+            "QUERY": "USB Serial Device",
+            "BAUDRATE": 9600,
+            "TIMEOUT": 0.1
+        },
+        "RETRY_COUNT": 5
+    },
+    "DATA": {
+        "FRUITS": [
+            "banana",
+            "apple",
+            "orange"
+        ]
+    },
+    "BUTTONS": [
+        {
+            "pos": 1,
+            "text": "Test\n",
+            "func": "send_text"
+        },
+        {
+            "pos": 2,
+            "text": "Fruit loop",
+            "func": "loop_up",
+            "extra": "FRUITS",
+            "pre": [
+                [
+                    "shift",
+                    "enter"
+                ]
+            ],
+            "post": [
+                [
+                    "enter"
+                ]
+            ]
+          },
+          {
+            "pos": 3,
+            "text": "Undo",
+            "hotkeys": [
+                [
+                    "ctrl",
+                    "z"
+                ]
+            ],
+            "func": "send_hotkey"
+          }
+    ]
+}

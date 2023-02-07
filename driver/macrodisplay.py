@@ -1,29 +1,30 @@
 #!/usr/bin/env python3
 # macrodisplay.py  - display what the macros actually are on a component
-from tkinter import StringVar, Tk
+import time
+
 import ttkbootstrap as ttk
+from tkinter import StringVar, Tk
 from ttkbootstrap.constants import *
+from functools import partial
 
 from util import Util
-import time
-from functools import partial
 
 
 class MacroDisplay(ttk.Frame):
     """
     TK Frame class for the Macro Display
     Params:
-        container - Tk root container
-        mode - str mode to cross reference against MACRO_ITEMS
+        container - Tk, root container
+        grid_size - dict, size of the grid in {"x": 3,"y": 4} format
+        macro_items - list, list of macro items / button objects
+        util - Util, util object
+        verbose - bool, verbosity
         **options - other options to be passed to tk
     Methods:
-        update_mode - update the mode and rebuild grid with new data. Cross references MACRO_ITEMS
+        tbd
     """
 
     def __init__(self, container: Tk, grid_size: dict, macro_items: list, util: Util, verbose: bool = False, **options):
-        """
-        Constructor. Expects TK container, and grid_size like {"x": 2, "y": 3}
-        """
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
         self.verbose = verbose
@@ -53,10 +54,11 @@ class MacroDisplay(ttk.Frame):
                 print(item)
 
             grid[item['pos']] = ttk.Button(self.container,
-                                            text=item['text'].strip(), 
-                                            bootstyle=(DARK),
-                                            command=partial(self.handle_press, item["pos"])
-                                            )
+                                           text=item['text'].strip(),
+                                           bootstyle=(DARK),
+                                           command=partial(
+                                               self.handle_press, item["pos"])
+                                           )
 
             grid[item["pos"]].grid(row=r, column=c,
                                    ipadx=5, ipady=5, padx=2, pady=2
@@ -78,7 +80,7 @@ class MacroDisplay(ttk.Frame):
 
     def click(self, pos: int, verbose: bool = False):
         if self.verbose:
-            print(f"click - pos: {pos}") 
+            print(f"click - pos: {pos}")
         if pos > len(self.macrogrid):
             print("Hit a button that's not defined in the config file!")
             print(f"  pos: {pos} larger than buttons length")
