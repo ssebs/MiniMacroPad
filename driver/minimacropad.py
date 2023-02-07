@@ -1,27 +1,25 @@
 #!/usr/bin/env python3
 # minimacropad.py - A python driver to provide functionality to the mini macro pad.
 
+import os
+import sys
 import time
 import signal
-import sys
-import os
 import threading
 
 import serial
 import serial.tools.list_ports
 
+import ttkbootstrap as ttk
+from tkinter import Tk, messagebox
+from ttkbootstrap.constants import *
 from playsound import playsound
 
-from util import Util, Config, CustomSerialException, SerialNotFoundException, SerialMountException
 from macrodisplay import MacroDisplay
-from tkinter import Tk, messagebox
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
-
+from util import Util, Config, CustomSerialException, SerialNotFoundException, SerialMountException
 
 DEBUG = False
 RETRY_COUNT = 5
-SECOND_MONITOR = False
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
@@ -47,7 +45,6 @@ def main():
         print("Driver for macro pad:")
 
     # Load json Config
-    # config = Config(config_path="./driver/sampleconfig.json", verbose=DEBUG)
     config = Config(verbose=DEBUG)
 
     # Load arduino serial connection
@@ -97,7 +94,7 @@ def main():
 
 def init_arduino(config: Config) -> serial.Serial:
     """
-    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port 
+    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port
     Returns:
         Serial object of arduino / teensy
     """
@@ -122,7 +119,7 @@ def init_arduino(config: Config) -> serial.Serial:
 
 def init_gui(util: Util, config: Config) -> MacroDisplay:
     """
-    Initialize the gui, uses global root var. 
+    Initialize the gui, uses global root var.
     Returns:
         MacroDisplay object for GUI
     """
@@ -139,7 +136,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     posX = None
     posY = None
     # Set window location + size
-    if SECOND_MONITOR:
+    if config.config["MONITOR"] != 1:
         posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
         posY = root.winfo_screenheight() - int(root.winfo_screenheight() / 2)
     else:

@@ -5,7 +5,8 @@ from enum import Enum
 import random
 from tkinter import ttk
 import pyautogui
-import os.path 
+import os.path
+
 
 class Config():
     DEFAULT_CONFIG = {
@@ -16,7 +17,7 @@ class Config():
             "SERIAL": {
                 "QUERY": "USB Serial Device",
                 "BAUDRATE": 9600,
-                "TIMEOUT":  0.1
+                "TIMEOUT": 0.1
             }
         },
         "DATA": {},
@@ -31,9 +32,10 @@ class Config():
 
     def __init__(self, config_path: str = None, verbose: bool = False):
         self.verbose = verbose
-        self.default_path = os.path.expanduser("~") + "/minimacropad-config.json"
+        self.default_path = os.path.expanduser(
+            "~") + "/minimacropad-config.json"
         self.path = config_path if config_path else self.default_path
-        
+
         self.config = self.load_config()["CONFIG"]
         self.size = self.config["SIZE"]
         self.monitor = self.config["MONITOR"]
@@ -46,7 +48,8 @@ class Config():
                 try:
                     return json.loads(f.read())
                 except Exception as e:
-                    print(f"Failed to parse JSON from {self.path} config file.")
+                    print(
+                        f"Failed to parse JSON from {self.path} config file.")
         except FileNotFoundError:
             self.save_default_config()
             return self.load_config()
@@ -62,6 +65,7 @@ class Config():
 
     def get_path(self):
         return self.path
+
 
 class Util():
     def __init__(self, config_path: str, verbose=False):
@@ -104,8 +108,8 @@ class Util():
                     raise e
         if self.verbose:
             print("loopers")
-            for l in self.loopers.values():
-                l.print_str()
+            for looper in self.loopers.values():
+                looper.print_str()
         # self.loopers.print_str()
 
     def handle_btn_press(self, position: int):
@@ -116,7 +120,7 @@ class Util():
             print(f"pos: {position} larger than buttons length")
             print("Doing nothing")
             return
-        
+
         func_name = None
         extra = None
         for item in self.buttons:
