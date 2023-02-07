@@ -123,7 +123,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     global root
     root = ttk.Window(themename="darkly")
     macro_display = MacroDisplay(
-        root, grid_size=config.config["SIZE"], macro_items=config.buttons, util=util, verbose=DEBUG)
+        root, grid_size=config.config["SIZE"], buttons=config.buttons, util=util, verbose=DEBUG)
 
     signal.signal(signal.SIGINT, signal.default_int_handler)
     root.protocol("WM_DELETE_WINDOW", handle_close)

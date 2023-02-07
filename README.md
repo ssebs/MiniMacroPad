@@ -67,29 +67,34 @@ There's an expected format for this file:
 > See ./driver/res/sampleconfig.json for detailed example
 
 ## TODO:
+- [ ] Support multiple pages of stuff
+- [ ] Support clicking on gui button to do macro
+- [ ] Support delays
+- [ ] Cleanup GUI, same size buttons
+- [ ] Support audio stuff?
+  - [ ] i.e. soundboard and hold press to talk at the same time?
+- [ ] Editor GUI for config file?
+  - [ ] Support ez features from json
+  - [ ] Support all features from json
+- [ ] Mouse macros
+
+## Tech Debt
+- [ ] Stop using `pos` variable (fix positioning / indexing)
+- [ ] Stop using global vars
+- [ ] Rename lots of variables
+  - [ ] "Util" class 🙄
+  - [ ] "thread1"
+  - [ ] handle_press in MacroDisplay
+  - [ ] click in MacroDisplay
+- [ ] Some testing?
+- [ ] Wiring diagram?
+- [ ] Pics of my arduino
+
+## Completed work (moved from todo or TD)
+- [x] config file for macropad settings
+- [x] JSON customizable actions (or YAML)
+  - [x] make this save / load to ~/minimacropad-config.json
 - [x] Make driver work
 - [x] Functional actions / macros
   - [x] Keyboard macros
-  - [ ] Mouse macros
-  - [ ] Other stuff?
-- [...] JSON customizable actions (or YAML)
-  - [x] make this save / load to ~/minimacropad-config.json
-  - [ ] EZ edit for these
-- [ ] Editor GUI for config file
-  - [ ] How many buttons?
-  - [ ] How many cols?
-  - [ ] Serial Device name
-  - [ ] Enter lists for loopers
-  - [ ] Select predefinied functions
-- [ ] new GUI
-- [ ] support multiple pads (in config at least)
-- [ ] support multiple pages of stuff
-- [ ] support delays in macros
-- [ ] support clicking on gui button to do macro
-- [ ] support audio stuff
-  - [ ] i.e. soundboard and hold press to talk at the same time
-
-## Tech Debt
-- [ ] Stop using `pos` variable
-- [ ] Some testing?
-- [ ] ...
+- [x] support multiple pads (in config at least)

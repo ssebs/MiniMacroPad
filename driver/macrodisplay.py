@@ -16,7 +16,7 @@ class MacroDisplay(ttk.Frame):
     Params:
         container - Tk, root container
         grid_size - dict, size of the grid in {"x": 3,"y": 4} format
-        macro_items - list, list of macro items / button objects
+        buttons - list, list of macro items / button objects
         util - Util, util object
         verbose - bool, verbosity
         **options - other options to be passed to tk
@@ -24,12 +24,12 @@ class MacroDisplay(ttk.Frame):
         tbd
     """
 
-    def __init__(self, container: Tk, grid_size: dict, macro_items: list, util: Util, verbose: bool = False, **options):
+    def __init__(self, container: Tk, grid_size: dict, buttons: list, util: Util, verbose: bool = False, **options):
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
         self.verbose = verbose
         self.util = util
-        self.macro_items = macro_items
+        self.buttons = buttons
         self.truncate_length = 28
         self.container = container
         self.size = grid_size
@@ -48,7 +48,7 @@ class MacroDisplay(ttk.Frame):
         grid = {}
         r = 0
         c = 0
-        for item in self.macro_items:
+        for item in self.buttons:
             if self.verbose:
                 print(f"{item['text'].strip()} - r: {r}, c: {c}")
                 print(item)
@@ -73,12 +73,16 @@ class MacroDisplay(ttk.Frame):
     # end _init_grid
 
     def handle_press(self, position: int):
+        # TODO: rename
+        """Handle button click on GUI"""
         if self.verbose:
             print(f"clicked {position}")
         self.util.handle_btn_press(position - 1)
     # handle_press
 
     def click(self, pos: int, verbose: bool = False):
+        # TODO: rename
+        """Display visual click on GUI in `pos`"""
         if self.verbose:
             print(f"click - pos: {pos}")
         if pos > len(self.macrogrid):
