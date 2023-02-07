@@ -47,8 +47,6 @@ There's an expected format for this file:
     - Possible functions are:
       - `send_text`
         - Types whatever is in the "text" field
-      - `send_undo`
-        - Types CTRL + Z
       - `send_hotkey`
         - Types whatever you put in the array, supports multiple hotkeys
         - e.g.  `[ [ "win", "r" ], [ "shell:startup", "enter" ] ]`

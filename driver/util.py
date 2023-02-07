@@ -23,7 +23,7 @@ class Config():
         # Load JSON config from path, write default if nothing is found
         self.full_config = self.load_config()
 
-        # Shortcuts
+        # Shortcuts for accessing
         self.config = self.full_config["CONFIG"]
         self.buttons = self.full_config["BUTTONS"]
         self.data = self.full_config["DATA"]
@@ -32,6 +32,7 @@ class Config():
     # init
 
     def load_config(self) -> dict:
+        """Loads JSON config from self.path"""
         try:
             with open(self.path, "r") as f:
                 try:
@@ -41,7 +42,7 @@ class Config():
                     print(msg)
                     raise e
         except FileNotFoundError:
-            if self.default_config_path == self.path:
+            if self.default_path == self.path:
                 self.save_default_config()
                 return self.load_config()
             else:
@@ -54,8 +55,25 @@ class Config():
     # load_config
 
     def save_default_config(self):
-        with open(self.path, "w") as f:
-            f.write(json.dumps(self.DEFAULT_CONFIG))
+        _config = None
+        try:
+            with open(self.default_config_path, "r") as f:
+                _config = f.read()
+        except FileNotFoundError:
+            msg = f"Failed to find {self.default_config_path}"
+            print(msg)
+            raise Exception(msg)
+        except Exception as e:
+            print("Failed to load config file")
+            print(e)
+            raise e
+        try:
+            with open(self.path, "w") as f:
+                f.write(_config)
+        except Exception as e:
+            print("Failed to save config file")
+            print(e)
+            raise e
     # save_default_config
 
     def get_path(self):
@@ -137,9 +155,6 @@ class Util():
     def send_text(self, idx: int):
         pyautogui.write(self.buttons[idx]["text"])
 
-    def send_undo(self, idx: int):
-        pyautogui.hotkey('ctrl', 'z')
-
     def send_hotkey(self, idx: int):
         if "hotkeys" not in self.buttons[idx]:
             raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
@@ -149,6 +164,7 @@ class Util():
 
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
+        # TODO: Make pre and post wrapper funcs
         self._pre(idx)
         pyautogui.write(self.loopers[extra].get_str())
         self._post(idx)
