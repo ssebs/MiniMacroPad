@@ -160,7 +160,7 @@ Example below:
   - [ ] Mouse macros
   - [ ] Other stuff?
 - [...] JSON customizable actions (or YAML)
-  - [ ] make this save / load to ~/minimacropad-config.json
+  - [x] make this save / load to ~/minimacropad-config.json
   - [ ] EZ edit for these
 - [ ] Editor GUI for config file
   - [ ] How many buttons?
@@ -173,5 +173,7 @@ Example below:
 - [ ] support multiple pages of stuff
 - [ ] support delays in macros
 - [ ] support clicking on gui button to do macro
+- [ ] support audio stuff
+  - [ ] i.e. soundboard and hold press to talk at the same time
 
 https://ttkbootstrap.readthedocs.io/en/latest/themes/dark/
