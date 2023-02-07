@@ -39,14 +39,57 @@ def main():
     if DEBUG:
         print("Driver for macro pad:")
 
-    # Load json Config
+    # Load json Config from file
     config = Config(verbose=DEBUG)
+    # Setup Util class - rename this pls
+    util = Util(config, verbose=DEBUG)
 
+    # Load arduino
+    arduino = init_arduino(config)
+    window = init_gui(util, config)
+
+    # Setup Serial comm thread
+    global thread1
+    # For the close icon in the GUI, stop the thread too
+    global do_close
+    do_close = False
+
+    # Handle reading serial data via main_loop
+    thread1 = threading.Thread(target=main_loop, args=(
+        arduino, root, window, util), daemon=True)
+    thread1.start()
+
+    # Start GUI thread
+    root.mainloop()
+# end main
+
+
+def init_arduino(config: Config) -> serial.Serial:
+    """
+    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port
+    Returns:
+        Serial object of arduino / teensy
+    """
     # Load arduino serial connection
     for tries in range(config.config["RETRY_COUNT"]):
         try:
-            arduino = init_arduino(config)
-            # macro_display = init_gui()  # sets global root, returns MacroDisplay
+            # Start stuff we hope to do
+
+            # Get serial port name, if available
+            serial_port = get_serial_port_name(
+                name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG
+            )
+            if serial_port is None:
+                raise SerialNotFoundException(
+                    f"Failed to load serial port: {config.serial['QUERY']}")
+            # Get serial connection if we can
+            arduino = serial.Serial(port=serial_port, baudrate=config.serial["BAUDRATE"],
+                                    timeout=config.serial["TIMEOUT"])
+            if arduino is None:
+                raise SerialMountException(
+                    f"Failed to mount Serial port: {config.serial['QUERY']}")
+        # end stuff that we hope for
+        # TODO: Cleanup. If you're reading this, sorry
         except serial.SerialException as e:
             print(e)
             messagebox.showerror(title=MSGBOX_TITLE,
@@ -67,47 +110,6 @@ def main():
             sys.exit(1)
         # break if trying succeeds
         break
-
-    # Setup Util class
-    util = Util(config, verbose=DEBUG)
-
-    window = init_gui(util, config)
-
-    # Setup Serial comm thread
-    global thread1
-    # For the close icon in the GUI, stop the thread too
-    global do_close
-    do_close = False
-
-    thread1 = threading.Thread(target=main_loop, args=(
-        arduino, root, window, util), daemon=True)
-    thread1.start()
-
-    root.mainloop()
-# end main
-
-
-def init_arduino(config: Config) -> serial.Serial:
-    """
-    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port
-    Returns:
-        Serial object of arduino / teensy
-    """
-    # what my PC says the teensy LC is called, could use COM7 but that could change
-    signal.signal(signal.SIGINT, signal.default_int_handler)
-    serial_port = get_serial_port_name(
-        name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG)
-
-    if serial_port is None:
-        raise SerialNotFoundException(
-            f"Failed to load serial port: {config.serial['QUERY']}")
-
-    arduino = serial.Serial(port=serial_port, baudrate=config.serial["BAUDRATE"],
-                            timeout=config.serial["TIMEOUT"])
-    if arduino is None:
-        raise SerialMountException(
-            f"Failed to mount Serial port: {config.serial['QUERY']}")
-
     return arduino
 # end init_arduino
 
@@ -123,6 +125,7 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     macro_display = MacroDisplay(
         root, grid_size=config.config["SIZE"], macro_items=config.buttons, util=util, verbose=DEBUG)
 
+    signal.signal(signal.SIGINT, signal.default_int_handler)
     root.protocol("WM_DELETE_WINDOW", handle_close)
     root.iconbitmap(resource_path(ICON_PATH))
     # root.resizable(False, False)

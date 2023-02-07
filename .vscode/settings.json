@@ -14,5 +14,6 @@
     "python.linting.pycodestyleArgs": [
         "--ignore=E303",
         "--ignore=E501",
+        "--max-line-length=120"
     ]
 }
