@@ -5,6 +5,7 @@ import json
 import random
 import os.path
 import pyautogui
+import serial.tools.list_ports
 
 from enum import Enum
 
@@ -126,9 +127,12 @@ class Util():
 
         # Return new dict
         return _looper
+    # parse_loopers
 
     def handle_btn_press(self, position: int):
-        print(f"Pressed: {position}")
+        """Calls function defined in position in BUTTONS"""
+        if self.verbose:
+            print(f"Pressed: {position}")
 
         if position > len(self.config.buttons):
             print("Hit a button that's not defined in the config file!")
@@ -136,6 +140,7 @@ class Util():
             print("Doing nothing")
             return
 
+        # Get function name and extra from button position
         func_name = None
         extra = None
         for item in self.config.buttons:
@@ -148,10 +153,12 @@ class Util():
 
         # Get func name from string
         func = getattr(self, func_name)
+        # Call function, with params if extra is defined
         if extra is None:
             func(position - 1)
         else:
             func(position - 1, extra)
+    # handle_btn_press
 
     # Functions below
     def send_text(self, idx: int):
@@ -251,3 +258,28 @@ def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(
         os.path.abspath(__file__)) + "\\res")
     return os.path.join(base_path, relative_path)
+
+
+def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
+    """
+    Gets the COM port as a str that the arduino is connected to
+    params:
+        name - name of what you want to match (e.g. COM1)
+        is_COM_name - is this a COM name or description? (e.g. COM1 vs USB Serial Device (COM1))
+    Returns:
+        Serial COM port as str
+    """
+    ports = list(serial.tools.list_ports.comports())
+    if verbose:
+        print("Serial Ports:")
+    for p in ports:
+        if verbose:
+            print(f"  {p.name} - {p.description}")
+        if is_COM_name:
+            if p.name == name:
+                return p.name
+        else:
+            if name in p.description:
+                return p.name
+    return None
+# end load_port

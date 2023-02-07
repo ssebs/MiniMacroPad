@@ -8,7 +8,6 @@ import signal
 import threading
 
 import serial
-import serial.tools.list_ports
 
 import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
@@ -19,7 +18,7 @@ from macrodisplay import MacroDisplay
 from util import (
     Util, Config, CustomSerialException,
     SerialNotFoundException, SerialMountException,
-    resource_path
+    resource_path, get_serial_port_name
 )
 
 DEBUG = False
@@ -96,7 +95,7 @@ def init_arduino(config: Config) -> serial.Serial:
     """
     # what my PC says the teensy LC is called, could use COM7 but that could change
     signal.signal(signal.SIGINT, signal.default_int_handler)
-    serial_port = load_port(
+    serial_port = get_serial_port_name(
         name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG)
 
     if serial_port is None:
@@ -161,45 +160,20 @@ def main_loop(arduino, root, window, util: Util):
             if "log:" in data:
                 if DEBUG:
                     print(data)
-
             if ":" not in data:
-                # Do something based on button that was pressed
+                # Get button position from data
                 btn_pos = int(data)
                 if btn_pos > len(util.config.buttons):
                     # 11 => 1
                     if len(str(btn_pos)) > 1:
                         btn_pos = int(str(btn_pos)[-1])
-                util.handle_btn_press(btn_pos)
-                # Util.MACRO_ITEMS[btn_pos]["func"](btn_pos)
-                window.click(btn_pos)
 
+                # Do something based on button that was pressed
+                util.handle_btn_press(btn_pos)
+                window.click(btn_pos)  # display on gui
+            # end if we got clean data
     # end loop
 # end main_loop
-
-
-def load_port(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
-    """
-    Gets the COM port as a str that the arduino is connected to
-    params:
-        name - name of what you want to match (e.g. COM1)
-        is_COM_name - is this a COM name or description? (e.g. COM1 vs USB Serial Device (COM1))
-    Returns:
-        Serial COM port as str
-    """
-    ports = list(serial.tools.list_ports.comports())
-    if verbose:
-        print("Serial Ports:")
-    for p in ports:
-        if verbose:
-            print(f"  {p.name} - {p.description}")
-        if is_COM_name:
-            if p.name == name:
-                return p.name
-        else:
-            if name in p.description:
-                return p.name
-    return None
-# end load_port
 
 
 def handle_close():
