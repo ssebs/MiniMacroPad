@@ -1,6 +1,6 @@
 # MiniMacroPad
 
-Keyboard firmware and driver for my macropad. Using a Arduino Pro Micro
+Keyboard firmware and driver for my macropad. Using a Arduino Pro Micro or teensy lc
 
 ## Firmware / arduino stuff
 See `MiniMacroPad.ino` for more details, but basically you click a button and it sends a serial number of what button you pressed
@@ -13,7 +13,7 @@ Here's what the grid looks like physically:
 ```
 
 ## driver
-A python driver to provide functionality to the mini macro pad.
+A python driver to provide functionality to the mini macro pad. All driver related code is under driver.
 
 ## Install dependencies
 - python3
@@ -26,16 +26,20 @@ A python driver to provide functionality to the mini macro pad.
 - `cd driver/`
 - `pyinstaller minimacropad.spec`
     - Built file is under `./dist/`
+    - Run this .exe
 
 ## Config file
-You'll need to create a config file that controls the macro pad. This will be saved in your `home directory/minimacropad-config.json`
-  - Windows:
-    - `C:\Users\<username>\minimacropad-config.json`
-  - *nix:
-    - `~/minimacropad-config.json`
+A config file that controls the macro pad will be created for you. This will be saved in your `home directory/minimacropad-config.json`.
+
+- Windows:
+  - `C:\Users\<username>\minimacropad-config.json`
+- *nix:
+  - `~/minimacropad-config.json`
+
+*This json file is how you will control the functionality of the macro pad.*
 
 There's an expected format for this file:
-- A `DATA` object where you can add lists of strings that you may want to use.
+- A `DATA` object where you can add lists of strings that you may want to use for looping thru.
   - Like: `"DATA": { "ARR_NAME": ["value1", "value2"] }`
 - A `BUTTONS` object where you'll need the following attributes:
   - `pos`
@@ -98,3 +102,6 @@ There's an expected format for this file:
 - [x] Functional actions / macros
   - [x] Keyboard macros
 - [x] support multiple pads (in config at least)
+
+## LICENSE
+(./LICENSE)[GPLv3]
