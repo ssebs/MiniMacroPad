@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # util.py - Util stuff
+import sys
 import json
-from enum import Enum
 import random
-from tkinter import ttk
-import pyautogui
 import os.path
+import pyautogui
+
+from enum import Enum
 
 
 class Config():
@@ -227,3 +228,12 @@ class SerialNotFoundException(CustomSerialException):
 
 class SerialMountException(CustomSerialException):
     pass
+
+# Helper functions
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(
+        os.path.abspath(__file__)) + "\\res")
+    return os.path.join(base_path, relative_path)

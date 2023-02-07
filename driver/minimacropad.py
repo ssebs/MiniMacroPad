@@ -16,7 +16,11 @@ from ttkbootstrap.constants import *
 from playsound import playsound
 
 from macrodisplay import MacroDisplay
-from util import Util, Config, CustomSerialException, SerialNotFoundException, SerialMountException
+from util import (
+    Util, Config, CustomSerialException,
+    SerialNotFoundException, SerialMountException,
+    resource_path
+)
 
 DEBUG = False
 RETRY_COUNT = 5
@@ -27,13 +31,6 @@ SERIAL_QRY = "USB Serial Device (COM7)"
 SERIAL_BAUD = 9600
 SERIAL_TIMEOUT = 0.1
 MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
-
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(
-        os.path.abspath(__file__)) + "\\res")
-    return os.path.join(base_path, relative_path)
 
 
 def main():
@@ -136,10 +133,16 @@ def init_gui(util: Util, config: Config) -> MacroDisplay:
     posX = None
     posY = None
     # Set window location + size
-    if config.config["MONITOR"] != 1:
+    if config.config["MONITOR"] == -1:
+        # dev mode
+        posX = root.winfo_screenwidth() + 200
+        posY = int(root.winfo_screenheight() / 2) - 200
+    elif config.config["MONITOR"] != 1:
+        # 2nd monitor
         posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
         posY = root.winfo_screenheight() - int(root.winfo_screenheight() / 2)
     else:
+        # 1st monitor
         posX = int(root.winfo_screenwidth() / 2)
         posY = int(root.winfo_screenheight() / 2)
     root.geometry(f"{config.config['GUI_SIZE']}+{posX}+{posY}")
