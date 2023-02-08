@@ -85,6 +85,7 @@ There's an expected format for this file:
 ## Tech Debt
 - [ ] Stop using `pos` variable (fix positioning / indexing)
 - [ ] Stop using global vars
+- [ ] Add pre and post wrapper functions to all
 - [ ] Rename lots of variables
   - [ ] "Util" class 🙄
   - [ ] "thread1"

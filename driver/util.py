@@ -121,7 +121,7 @@ class Util():
                     raise e
 
         if self.verbose:
-            print("loopers")
+            print("loopers:")
             for looper in _looper.values():
                 looper.print_str()
 
@@ -235,7 +235,7 @@ class StringLooper():
         self.pos = random.randint(self.min, self.max)
 
     def print_str(self):
-        print(f"{self.name} - pos: {self.pos}, min: {self.min}, max: {self.max}")
+        print(f"  {self.name} - pos: {self.pos}, min: {self.min}, max: {self.max}")
 
 
 # Exceptions

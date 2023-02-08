@@ -21,7 +21,7 @@ from util import (
     resource_path, get_serial_port_name
 )
 
-DEBUG = False
+DEBUG = True
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
@@ -165,6 +165,7 @@ def main_loop(arduino, root, window, util: Util):
                     print(data)
             if ":" not in data:
                 # Get button position from data
+                # Button position is NOT 0 indexed!
                 btn_pos = int(data)
                 if btn_pos > len(util.config.buttons):
                     # 11 => 1

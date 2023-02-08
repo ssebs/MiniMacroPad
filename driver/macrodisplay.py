@@ -45,26 +45,29 @@ class MacroDisplay(ttk.Frame):
         Returns:
             dict of ttk grid buttons
         """
+        if self.verbose:
+            print("init grid:")
         grid = {}
         r = 0
         c = 0
-        for item in self.buttons:
+        for idx, item in enumerate(self.buttons, start=1):
             if self.verbose:
-                print(f"{item['text'].strip()} - r: {r}, c: {c}")
+                print(f"idx: {idx} {item['text'].strip()} - r: {r}, c: {c}")
+                print("  ", end='')
                 print(item)
 
-            grid[item['pos']] = ttk.Button(self.container,
-                                           text=item['text'].strip(),
-                                           bootstyle=(DARK),
-                                           command=partial(
-                                               self.handle_press, item["pos"])
-                                           )
-
-            grid[item["pos"]].grid(row=r, column=c,
-                                   ipadx=5, ipady=5, padx=2, pady=2
+            grid[idx] = ttk.Button(self.container,
+                                   text=item['text'].strip(),
+                                   bootstyle=(DARK),
+                                   command=partial(
+                                       self.handle_press, idx)
                                    )
+
+            grid[idx].grid(row=r, column=c,
+                           ipadx=5, ipady=5, padx=2, pady=2
+                           )
             # Increment
-            if item["pos"] % self.size['x'] == 0:
+            if idx % self.size['x'] == 0:
                 r += 1
                 c = 0
             else:
