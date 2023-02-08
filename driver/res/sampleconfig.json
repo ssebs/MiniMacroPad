@@ -22,12 +22,10 @@
     },
     "BUTTONS": [
         {
-            "pos": 1,
             "text": "Test\n",
             "func": "send_text"
         },
         {
-            "pos": 2,
             "text": "Fruit loop",
             "func": "loop_up",
             "extra": "FRUITS",
@@ -42,9 +40,8 @@
                     "enter"
                 ]
             ]
-          },
-          {
-            "pos": 3,
+        },
+        {
             "text": "Undo",
             "hotkeys": [
                 [
@@ -53,6 +50,6 @@
                 ]
             ],
             "func": "send_hotkey"
-          }
+        }
     ]
 }

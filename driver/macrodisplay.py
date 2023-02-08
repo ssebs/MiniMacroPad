@@ -48,8 +48,8 @@ class MacroDisplay(ttk.Frame):
         if self.verbose:
             print("init grid:")
         grid = {}
-        r = 0
-        c = 0
+        r = 0  # current row
+        c = 0  # current column
         for idx, item in enumerate(self.buttons, start=1):
             if self.verbose:
                 print(f"idx: {idx} {item['text'].strip()} - r: {r}, c: {c}")
@@ -80,20 +80,23 @@ class MacroDisplay(ttk.Frame):
         """Handle button click on GUI"""
         if self.verbose:
             print(f"clicked {position}")
-        self.util.handle_btn_press(position - 1)
+        # alt + tab back to whatever the user was doing before
+        self.util.alt_tab()
+        # do function
+        self.util.handle_btn_press(position)
     # handle_press
 
-    def click(self, pos: int, verbose: bool = False):
+    def display_click(self, position: int, verbose: bool = False):
         # TODO: rename
-        """Display visual click on GUI in `pos`"""
+        """Display visual click on GUI in `position`"""
         if self.verbose:
-            print(f"click - pos: {pos}")
-        if pos > len(self.macrogrid):
+            print(f"click - pos: {position}")
+        if position > len(self.macrogrid):
             print("Hit a button that's not defined in the config file!")
-            print(f"  pos: {pos} larger than buttons length")
+            print(f"  position: {position} larger than buttons length")
             print("  Doing nothing!")
             return
-        self.macrogrid[pos].configure(bootstyle=PRIMARY)
+        self.macrogrid[position].configure(bootstyle=PRIMARY)
         time.sleep(.25)
-        self.macrogrid[pos].configure(bootstyle=DARK)
+        self.macrogrid[position].configure(bootstyle=DARK)
     # click

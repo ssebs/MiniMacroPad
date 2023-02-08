@@ -21,7 +21,7 @@ from util import (
     resource_path, get_serial_port_name
 )
 
-DEBUG = True
+DEBUG = False
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
@@ -174,7 +174,7 @@ def main_loop(arduino, root, window, util: Util):
 
                 # Do something based on button that was pressed
                 util.handle_btn_press(btn_pos)
-                window.click(btn_pos)  # display on gui
+                window.display_click(btn_pos)  # display on gui
             # end if we got clean data
     # end loop
 # end main_loop

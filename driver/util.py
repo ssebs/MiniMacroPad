@@ -143,22 +143,28 @@ class Util():
         # Get function name and extra from button position
         func_name = None
         extra = None
-        for item in self.config.buttons:
-            if item['pos'] == position:
+        for idx, item in enumerate(self.config.buttons, start=1):
+            if idx == position:
                 func_name = item["func"]
                 if "extra" in item:
                     extra = item["extra"]
+                break
         if func_name is None:
             raise Exception(f"Unable to find function in pos {position}.")
 
         # Get func name from string
         func = getattr(self, func_name)
         # Call function, with params if extra is defined
+        # - 1 since the button pos is not 0 indexed
         if extra is None:
             func(position - 1)
         else:
             func(position - 1, extra)
     # handle_btn_press
+
+    def alt_tab(self):
+        """press alt tab for use when clicking on a macro button"""
+        pyautogui.hotkey("alt", "tab")
 
     # Functions below
     def send_text(self, idx: int):
