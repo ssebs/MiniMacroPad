@@ -86,7 +86,9 @@ This may be out of date.
   - [ ] Support ez features from json
   - [ ] Support all features from json
 - [ ] Display next/last looper var in gui, don't just show next
-- [ ] Support encrypted file
+- [ ] Support encrypted files
+- [ ] Support multi-button macros
+- [ ] Support hotkeys instead of using Serial data?
 - [ ] Move extra btns to new row
 - [ ] Mouse macros
 
