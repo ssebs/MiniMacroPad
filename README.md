@@ -84,7 +84,6 @@ There's an expected format for this file:
 
 ## Tech Debt
 - [ ] Stop using global vars
-- [ ] Add pre and post wrapper functions to all
 - [ ] Rename lots of variables
   - [ ] "Util" class 🙄
   - [ ] "thread1"
@@ -95,6 +94,7 @@ There's an expected format for this file:
 - [ ] Pics of my arduino
 
 ## Completed work (moved from todo or TD)
+- [x] Add pre and post wrapper functions to all
 - [x] config file for macropad settings
 - [x] JSON customizable actions (or YAML)
   - [x] make this save / load to ~/minimacropad-config.json
