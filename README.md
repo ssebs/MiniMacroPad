@@ -72,7 +72,6 @@ There's an expected format for this file:
 
 ## TODO:
 - [ ] Support multiple pages of stuff
-- [ ] Support clicking on gui button to do macro
 - [ ] Support delays
 - [ ] Cleanup GUI, same size buttons
 - [ ] Support audio stuff?
@@ -83,7 +82,6 @@ There's an expected format for this file:
 - [ ] Mouse macros
 
 ## Tech Debt
-- [ ] Stop using `pos` variable (fix positioning / indexing)
 - [ ] Stop using global vars
 - [ ] Add pre and post wrapper functions to all
 - [ ] Rename lots of variables
@@ -103,6 +101,8 @@ There's an expected format for this file:
 - [x] Functional actions / macros
   - [x] Keyboard macros
 - [x] support multiple pads (in config at least)
+- [x] Support clicking on gui button to do macro
+- [x] Stop using `pos` variable (fix positioning / indexing)
 
 ## LICENSE
 [GPL v3](./LICENSE)
