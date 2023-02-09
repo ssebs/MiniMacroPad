@@ -96,6 +96,7 @@ class Util():
     def __init__(self, config: Config, verbose=False):
         self.verbose = verbose
         self.config = config
+        self.pos = -1
         self.loopers = self.parse_loopers()
     # init
 
@@ -133,6 +134,7 @@ class Util():
         """Calls function defined in position in BUTTONS"""
         if self.verbose:
             print(f"Pressed: {position}")
+        self.pos = position
 
         if position > len(self.config.buttons):
             print("Hit a button that's not defined in the config file!")
@@ -162,14 +164,29 @@ class Util():
             func(position - 1, extra)
     # handle_btn_press
 
+    # Macro Functions below
+    def outware(func):
+        def prepost(*args):
+            self = args[0]
+            if "pre" in self.config.buttons[self.pos]:
+                for keys in self.config.buttons[self.pos]["pre"]:
+                    pyautogui.hotkey(*keys)
+            func(*args)
+            if "post" in self.config.buttons[self.pos]:
+                for keys in self.config.buttons[self.pos]["post"]:
+                    pyautogui.hotkey(*keys)
+        return prepost
+
     def alt_tab(self):
         """press alt tab for use when clicking on a macro button"""
         pyautogui.hotkey("alt", "tab")
 
-    # Functions below
+    # User Macro Functions
+    @outware
     def send_text(self, idx: int):
         pyautogui.write(self.config.buttons[idx]["text"])
 
+    @outware
     def send_hotkey(self, idx: int):
         if "hotkeys" not in self.config.buttons[idx]:
             raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
@@ -177,41 +194,23 @@ class Util():
         for keys in self.config.buttons[idx]["hotkeys"]:
             pyautogui.hotkey(*keys)
 
+    @outware
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
-        # TODO: Make pre and post wrapper funcs
-        self._pre(idx)
         pyautogui.write(self.loopers[extra].get_str())
-        self._post(idx)
     # loop_up func from json
 
+    @outware
     def loop_down(self, idx: int, extra: str):
         self.loopers[extra].loop_down()
-        self._pre(idx)
         pyautogui.write(self.loopers[extra].get_str())
-        self._post(idx)
     # loop_down func from json
 
+    @outware
     def loop_rand(self, idx: int, extra: str):
         self.loopers[extra].loop_rand()
-        self._pre(idx)
         pyautogui.write(self.loopers[extra].get_str())
-        self._post(idx)
     # loop_rand func from json
-
-    def _pre(self, idx: int):
-        """Handle pre commands"""
-        if "pre" in self.config.buttons[idx]:
-            for keys in self.config.buttons[idx]["pre"]:
-                pyautogui.hotkey(*keys)
-    # _pre
-
-    def _post(self, idx: int):
-        """Handle post commands"""
-        if "post" in self.config.buttons[idx]:
-            for keys in self.config.buttons[idx]["post"]:
-                pyautogui.hotkey(*keys)
-    # _post
 
 
 class StringLooper():
