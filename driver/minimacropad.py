@@ -102,6 +102,10 @@ def init_arduino(config: Config) -> serial.Serial:
             if do_try_again:
                 continue
             else:
+                gui_only_mode = messagebox.askyesno(title=MSGBOX_TITLE,
+                                                    message=f"{str(e)}\n\nWant to run in GUI only mode?")
+                if gui_only_mode:
+                    return None
                 sys.exit(0)
             sys.exit(0)
         except Exception as e:
@@ -156,6 +160,8 @@ def main_loop(arduino, root, window, util: Util):
     Handles serial comms
     """
     while True:
+        if arduino is None:
+            continue
         data = str(arduino.readline().decode().strip())
         if data != "":
             if DEBUG:
