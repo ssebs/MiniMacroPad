@@ -1,6 +1,8 @@
 # MiniMacroPad
 
-Keyboard firmware and driver for my macropad. Using a Arduino Pro Micro or teensy lc
+Keyboard firmware and driver for my macropad. Using a Arduino Pro Micro or teensy lc in my case.
+
+See [thangs.com](https://thangs.com/designer/sebsafari/3d-model/Mini%20Macro%20Pad-710028?manualModelView=true) for the related STL files that you can print.
 
 ## Firmware / arduino stuff
 See `MiniMacroPad.ino` for more details, but basically you click a button and it sends a serial number of what button you pressed
@@ -70,6 +72,10 @@ There's an expected format for this file:
 
 > See ./driver/res/sampleconfig.json for detailed example
 
+## Screenshot of GUI
+This may be out of date.
+![screenshot](./img/mmpscreenshot.png)
+
 ## TODO:
 - [ ] Support multiple pages of stuff
 - [ ] Support delays
@@ -81,6 +87,7 @@ There's an expected format for this file:
   - [ ] Support all features from json
 - [ ] Display next/last looper var in gui, don't just show next
 - [ ] Support encrypted file
+- [ ] Move extra btns to new row
 - [ ] Mouse macros
 
 ## Tech Debt
@@ -105,6 +112,15 @@ There's an expected format for this file:
 - [x] support multiple pads (in config at least)
 - [x] Support clicking on gui button to do macro
 - [x] Stop using `pos` variable (fix positioning / indexing)
+
+## Hardware
+You'll need an arduino with some buttons. 
+Screenshot of mine below:
+![macro pad](./img/mmpbuilt.png)
+
+TBD: wiring diagram
+![wiring](./img/mmpwiring.png)
+TBD: better instructions
 
 ## LICENSE
 [GPL v3](./LICENSE)
