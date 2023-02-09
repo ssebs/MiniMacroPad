@@ -80,6 +80,7 @@ There's an expected format for this file:
   - [ ] Support ez features from json
   - [ ] Support all features from json
 - [ ] Display next/last looper var in gui, don't just show next
+- [ ] Support encrypted file
 - [ ] Mouse macros
 
 ## Tech Debt
