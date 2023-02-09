@@ -79,6 +79,7 @@ There's an expected format for this file:
 - [ ] Editor GUI for config file?
   - [ ] Support ez features from json
   - [ ] Support all features from json
+- [ ] Display next/last looper var in gui, don't just show next
 - [ ] Mouse macros
 
 ## Tech Debt
