@@ -159,9 +159,10 @@ def main_loop(arduino, root, window, util: Util):
     """
     Handles serial comms
     """
+    if arduino is None:
+        # GUI only mode
+        return
     while True:
-        if arduino is None:
-            continue
         data = str(arduino.readline().decode().strip())
         if data != "":
             if DEBUG:
