@@ -97,6 +97,7 @@ class Util():
         self.verbose = verbose
         self.config = config
         self.pos = -1
+        self.delay = 0.025  # seconds
         self.loopers = self.parse_loopers()
     # init
 
@@ -164,17 +165,31 @@ class Util():
             func(position - 1, extra)
     # handle_btn_press
 
+    """
+hotkey = ['shift', 'enter']
+
+for key in hotkey:
+    if key == 'shift':
+        pyautogui.keyDown(key)
+    else:
+        pyautogui.press(key)
+        pyautogui.keyUp('shift')
+    """
+
     # Macro Functions below
     def outware(func):
         def prepost(*args):
             self = args[0]
-            if "pre" in self.config.buttons[self.pos]:
-                for keys in self.config.buttons[self.pos]["pre"]:
-                    pyautogui.hotkey(*keys)
+
+            if "pre" in self.config.buttons[self.pos - 1]:
+                for keys in self.config.buttons[self.pos - 1]["pre"]:
+                    keys.reverse()  # Fix the order
+                    pyautogui.hotkey(*keys, interval=self.delay)
             func(*args)
-            if "post" in self.config.buttons[self.pos]:
-                for keys in self.config.buttons[self.pos]["post"]:
-                    pyautogui.hotkey(*keys)
+            if "post" in self.config.buttons[self.pos - 1]:
+                for keys in self.config.buttons[self.pos - 1]["post"]:
+                    keys.reverse()  # Fix the order
+                    pyautogui.hotkey(*keys, interval=self.delay)
         return prepost
 
     def alt_tab(self):

@@ -88,11 +88,12 @@ This may be out of date.
 - [ ] Display next/last looper var in gui, don't just show next
 - [ ] Support encrypted files
 - [ ] Support multi-button macros
-- [ ] Support hotkeys instead of using Serial data?
+- [ ] Support hotkeys + using Serial data?
 - [ ] Move extra btns to new row
 - [ ] Mouse macros
 
 ## Tech Debt
+- [ ] Fix shift + enter
 - [ ] Stop using global vars
 - [ ] Rename lots of variables
   - [ ] "Util" class 🙄
