@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # util.py - Util stuff
+from tkinter import *
 import sys
 import json
 import random
+import time
 import os.path
 import pyautogui
 import serial.tools.list_ports
@@ -97,7 +99,7 @@ class Util():
         self.verbose = verbose
         self.config = config
         self.pos = -1
-        self.delay = 0.025  # seconds
+        self.delay = 0.1  # seconds
         self.loopers = self.parse_loopers()
     # init
 
@@ -165,16 +167,14 @@ class Util():
             func(position - 1, extra)
     # handle_btn_press
 
-    """
-hotkey = ['shift', 'enter']
-
-for key in hotkey:
-    if key == 'shift':
-        pyautogui.keyDown(key)
-    else:
-        pyautogui.press(key)
-        pyautogui.keyUp('shift')
-    """
+    def press_hold(self, keys: list):
+        """Takes a list of keys to hold at the same time"""
+        for key in keys:
+            pyautogui.keyDown(key)
+        time.sleep(self.delay)
+        for key in keys:
+            pyautogui.keyUp(key)
+    # press_hold
 
     # Macro Functions below
     def outware(func):
@@ -183,13 +183,11 @@ for key in hotkey:
 
             if "pre" in self.config.buttons[self.pos - 1]:
                 for keys in self.config.buttons[self.pos - 1]["pre"]:
-                    keys.reverse()  # Fix the order
-                    pyautogui.hotkey(*keys, interval=self.delay)
+                    self.press_hold(keys)
             func(*args)
             if "post" in self.config.buttons[self.pos - 1]:
                 for keys in self.config.buttons[self.pos - 1]["post"]:
-                    keys.reverse()  # Fix the order
-                    pyautogui.hotkey(*keys, interval=self.delay)
+                    self.press_hold(keys)
         return prepost
 
     def alt_tab(self):
