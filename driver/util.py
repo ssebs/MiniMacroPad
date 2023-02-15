@@ -6,7 +6,7 @@ import json
 import random
 import time
 import os.path
-import pyautogui
+import keyboard
 import serial.tools.list_ports
 
 from enum import Enum
@@ -99,7 +99,7 @@ class Util():
         self.verbose = verbose
         self.config = config
         self.pos = -1
-        self.delay = 0.1  # seconds
+        self.delay = 0.02  # seconds
         self.loopers = self.parse_loopers()
     # init
 
@@ -169,11 +169,21 @@ class Util():
 
     def press_hold(self, keys: list):
         """Takes a list of keys to hold at the same time"""
+        # Press all keys down
         for key in keys:
-            pyautogui.keyDown(key)
+            # If we are sending a string, use write instead
+            if key.startswith("TXT="):
+                keyboard.write(key[4:])
+                time.sleep(self.delay)
+            else:
+                keyboard.press(key)
+        # Wait
         time.sleep(self.delay)
+        # Release all keys
         for key in keys:
-            pyautogui.keyUp(key)
+            # Ignore releasing strings
+            if not key.startswith("TXT="):
+                keyboard.release(key)
     # press_hold
 
     # Macro Functions below
@@ -189,15 +199,19 @@ class Util():
                 for keys in self.config.buttons[self.pos - 1]["post"]:
                     self.press_hold(keys)
         return prepost
+    # wrapper func to handle pre/post hotkeys
 
     def alt_tab(self):
         """press alt tab for use when clicking on a macro button"""
-        pyautogui.hotkey("alt", "tab")
+        self.press_hold(["alt", "tab"])
+        time.sleep(self.delay * 2)
+    # alt_tab
 
     # User Macro Functions
     @outware
     def send_text(self, idx: int):
-        pyautogui.write(self.config.buttons[idx]["text"])
+        keyboard.write(self.config.buttons[idx]["text"])
+    # send_text func from json
 
     @outware
     def send_hotkey(self, idx: int):
@@ -205,24 +219,25 @@ class Util():
             raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
 
         for keys in self.config.buttons[idx]["hotkeys"]:
-            pyautogui.hotkey(*keys)
+            self.press_hold(keys)
+    # send_hotkey func from json
 
     @outware
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
-        pyautogui.write(self.loopers[extra].get_str())
+        keyboard.write(self.loopers[extra].get_str())
     # loop_up func from json
 
     @outware
     def loop_down(self, idx: int, extra: str):
         self.loopers[extra].loop_down()
-        pyautogui.write(self.loopers[extra].get_str())
+        keyboard.write(self.loopers[extra].get_str())
     # loop_down func from json
 
     @outware
     def loop_rand(self, idx: int, extra: str):
         self.loopers[extra].loop_rand()
-        pyautogui.write(self.loopers[extra].get_str())
+        keyboard.write(self.loopers[extra].get_str())
     # loop_rand func from json
 
 

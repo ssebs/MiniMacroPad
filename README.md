@@ -55,8 +55,10 @@ There's an expected format for this file:
         - Types whatever is in the "text" field
       - `send_hotkey`
         - Types whatever you put in the array, supports multiple hotkeys
-        - e.g.  `[ [ "win", "r" ], [ "shell:startup", "enter" ] ]`
-        - What you enter here needs to work with `pyautogui.hotkey()`
+        - e.g.  `[ [ "win", "r" ], [ "TXT=shell:startup", "enter" ] ]`
+        - What you enter here needs to work with `keyboard.press`
+          - If adding a string value in the hotkey, add `TXT=` before.
+            - e.g. `"TXT=shell:startup"`
       - `loop_up`
         - Types whatever is up next in the loop
         - Requires `extra` to be definied 
@@ -69,6 +71,10 @@ There's an expected format for this file:
   - `extra`
     - string, extra metadata that may be required.
     - Example is name of the list of strings that will be used to loop thru
+  - `pre`
+    - Runs before the main function, takes same params as hotkeys
+  - `post`
+    - Runs after the main function, takes same params as hotkeys
 
 > See ./driver/res/sampleconfig.json for detailed example
 
@@ -93,7 +99,6 @@ This may be out of date.
 - [ ] Mouse macros
 
 ## Tech Debt
-- [ ] Fix shift + enter
 - [ ] Stop using global vars
 - [ ] Rename lots of variables
   - [ ] "Util" class 🙄
@@ -102,9 +107,9 @@ This may be out of date.
   - [ ] click in MacroDisplay
 - [ ] Some testing?
 - [ ] Wiring diagram?
-- [ ] Pics of my arduino
 
 ## Completed work (moved from todo or TD)
+- [x] Fix shift + enter
 - [x] Add pre and post wrapper functions to all
 - [x] config file for macropad settings
 - [x] JSON customizable actions (or YAML)
@@ -113,6 +118,7 @@ This may be out of date.
 - [x] Functional actions / macros
   - [x] Keyboard macros
 - [x] support multiple pads (in config at least)
+- [x] Pics of my arduino
 - [x] Support clicking on gui button to do macro
 - [x] Stop using `pos` variable (fix positioning / indexing)
 

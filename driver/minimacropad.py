@@ -163,26 +163,33 @@ def main_loop(arduino, root, window, util: Util):
         # GUI only mode
         return
     while True:
-        data = str(arduino.readline().decode().strip())
-        if data != "":
-            if DEBUG:
-                print(data)
-            if "log:" in data:
+        try:
+            data = str(arduino.readline().decode().strip())
+            if data != "":
                 if DEBUG:
                     print(data)
-            if ":" not in data:
-                # Get button position from data
-                # Button position is NOT 0 indexed!
-                btn_pos = int(data)
-                if btn_pos > len(util.config.buttons):
-                    # 11 => 1
-                    if len(str(btn_pos)) > 1:
-                        btn_pos = int(str(btn_pos)[-1])
+                if "log:" in data:
+                    if DEBUG:
+                        print(data)
+                if ":" not in data:
+                    # Get button position from data
+                    # Button position is NOT 0 indexed!
+                    btn_pos = int(data)
+                    if btn_pos > len(util.config.buttons):
+                        # 11 => 1
+                        if len(str(btn_pos)) > 1:
+                            btn_pos = int(str(btn_pos)[-1])
 
-                # Do something based on button that was pressed
-                util.handle_btn_press(btn_pos)
-                window.display_click(btn_pos)  # display on gui
-            # end if we got clean data
+                    # Do something based on button that was pressed
+                    util.handle_btn_press(btn_pos)
+                    window.display_click(btn_pos)  # display on gui
+                # end if we got clean data
+        except serial.serialutil.SerialException as e:
+            print("Device disconnected?")
+            print(e)
+            handle_close()
+            return
+
     # end loop
 # end main_loop
 
