@@ -83,20 +83,20 @@ This may be out of date.
 ![screenshot](./img/mmpscreenshot.png)
 
 ## TODO:
-- [ ] Support multiple pages of stuff
-- [ ] Support delays
-- [ ] Cleanup GUI, same size buttons
-- [ ] Support audio stuff?
-  - [ ] i.e. soundboard and hold press to talk at the same time?
+- [ ] Support delays!
+- [ ] Mouse macros
 - [ ] Editor GUI for config file?
   - [ ] Support ez features from json
   - [ ] Support all features from json
+- [ ] Cleanup GUI, same size buttons
+- [ ] Support audio stuff?
+  - [ ] i.e. soundboard and hold press to talk at the same time?
 - [ ] Display next/last looper var in gui, don't just show next
 - [ ] Support encrypted files
 - [ ] Support multi-button macros
 - [ ] Support hotkeys + using Serial data?
 - [ ] Move extra btns to new row
-- [ ] Mouse macros
+- [ ] Support multiple pages of stuff
 
 ## Tech Debt
 - [ ] Stop using global vars
