@@ -16,10 +16,11 @@ from playsound import playsound
 
 from macrodisplay import MacroDisplay
 from util import (
-    Util, Config, CustomSerialException,
+    Util, CustomSerialException,
     SerialNotFoundException, SerialMountException,
     resource_path, get_serial_port_name
 )
+from config import Config
 
 DEBUG = False
 ICON_PATH = 'bell.ico'
