@@ -9,8 +9,9 @@ import time
 import os.path
 import keyboard
 import mouse
+from datetime import datetime
 import serial.tools.list_ports
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 from functools import partial
 
 from enum import Enum
@@ -88,6 +89,18 @@ class Config():
             print(e)
             raise e
     # save_default_config
+
+    def save_config(self, new_config: Dict = None):
+        """Save self.full_configto self.path. If new_config is given, save that instead."""
+        if new_config is not None:
+            self.full_config = new_config
+        try:
+            with open(self.path, "w") as f:
+                f.write(json.dumps(self.full_config))
+        except Exception as e:
+            print("Failed to save config file")
+            print(e)
+            raise e
 
     def get_path(self):
         return self.path
@@ -217,37 +230,41 @@ class Util():
     # no outerwear since send_mouse uses it
     def rec_mouse(self, idx: int):
         """Record mouse inputs"""
-        positions = []
-        has_quit = False
-        count = 0
+        positions: Dict[str, str] = {}
+        has_quit: bool = False
+        count: int = 0
 
-        print("0")
-        # mouse.wait(button='left', target_types='up')  # wait for first click
-        # print(1)
-
-        def add_pos():
-            positions.append(mouse.get_position())
-            # custom diag box
-            question_display = QuestionDisplay(root, question="Would you like that to be a left, right, or double click?", answers=["Left", "Right", "Double"])
-            # msgbox.askquestion(title="Set Mouse Macro", message="Would you like that to be a left, right, or double click?", )
-
-        def leave():
-            has_quit = True
+        def add_pos(_type: str):
+            # Add mouse position and button click to positions
+            # _type can be: left, right, double, middle
+            x, y = mouse.get_position()
+            now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%Z")
+            positions[str(now)] = {
+                "type": _type,
+                "posx": x,
+                "posy": y,
+            }
 
         while not has_quit and count < 999999999:
+            # Record user input until they hit "ESC"
             count += 1
-            print(f"not has quit # {count}")
+            if self.verbose:
+                print(f"rec_mouse # {count}")
             has_quit = keyboard.is_pressed("escape")
-            mouse.on_middle_click(add_pos)
-            # mouse.on_right_click(lambda: has_quit=True)
-            time.sleep(self.delay)
 
-        # when recording, have user click to start, then move to correct pos, then right click to save, double to exit. if not double then repeat process
-        # click btn > move to pos > right click (save pos to list) > double click (to loop to beginning)
+            mouse.on_click(partial(add_pos, "left"))
+            mouse.on_middle_click(partial(add_pos, "middle"))
+            mouse.on_right_click(partial(add_pos, "right"))
+            mouse.on_double_click(partial(add_pos, "double"))
+            time.sleep(self.delay)
 
         keyboard.unhook_all()
         mouse.unhook_all()
-        print(remove_duplicates(positions))
+        if self.verbose:
+            print("Positions")
+            print(positions)
+        self.config.full_config["BUTTONS"][idx]["mouse_movements"] = positions
+        self.config.save_config()
     # rec_mouse
 
     @outware

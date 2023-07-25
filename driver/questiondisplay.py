@@ -22,7 +22,8 @@ class QuestionDisplay(ttk.Frame):
         tbd
     """
 
-    def __init__(self, container: Tk, question: str, answers: List[str], callback: Callable, verbose: bool = False, **options):
+    def __init__(self, question: str, answers: List[str], callback: Callable, verbose: bool = False, **options):
+        container = ttk.Window(themename="darkly")
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
         ttk.Style().configure("TLabel", font="Ubuntu-Mono 12")
@@ -32,6 +33,9 @@ class QuestionDisplay(ttk.Frame):
         self.callback = callback
         self.verbose = verbose
         self._init_gui()
+        self.container.attributes('-topmost', True)
+        self.container.update()
+        self.container.mainloop()
     # end __init__
 
     def _handle_press(self, answer: str):
@@ -64,7 +68,5 @@ class QuestionDisplay(ttk.Frame):
 
 
 if __name__ == "__main__":
-    win = ttk.Window(themename="darkly")
     question_display = QuestionDisplay(
-        win, question="Would you like that to be a left, right, or double click?", answers=["Left", "Right", "Double"], callback=print)
-    win.mainloop()
+        question="Would you like that to be a left, right, or double click?", answers=["Left", "Right", "Double"], callback=print)
