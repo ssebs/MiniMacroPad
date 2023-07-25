@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # util.py - Util stuff
 from tkinter import *
+import tkinter.messagebox as msgbox
 import sys
 import json
 import random
 import time
 import os.path
 import keyboard
+import mouse
 import serial.tools.list_ports
+from typing import Tuple, List
+from functools import partial
 
 from enum import Enum
 
@@ -207,7 +211,43 @@ class Util():
         time.sleep(self.delay * 2)
     # alt_tab
 
-    # User Macro Functions
+    # # User Macro Functions # #
+
+    # no outerwear since send_mouse uses it
+    def rec_mouse(self, idx: int):
+        """Record mouse inputs"""
+        positions = []
+        has_quit = False
+        count = 0
+
+        print("0")
+        # mouse.wait(button='left', target_types='up')  # wait for first click
+        # print(1)
+
+        def add_pos():
+            positions.append(mouse.get_position())
+            # custom diag box
+            # msgbox.askquestion(title="Set Mouse Macro", message="Would you like that to be a left, right, or double click?", )
+
+        def leave():
+            has_quit = True
+
+        while not has_quit and count < 999999999:
+            count += 1
+            print(f"not has quit # {count}")
+            has_quit = keyboard.is_pressed("escape")
+            mouse.on_middle_click(add_pos)
+            # mouse.on_right_click(lambda: has_quit=True)
+            time.sleep(self.delay)
+
+        # when recording, have user click to start, then move to correct pos, then right click to save, double to exit. if not double then repeat process
+        # click btn > move to pos > right click (save pos to list) > double click (to loop to beginning)
+
+        keyboard.unhook_all()
+        mouse.unhook_all()
+        print(remove_duplicates(positions))
+    # rec_mouse
+
     @outware
     def send_text(self, idx: int):
         keyboard.write(self.config.buttons[idx]["text"])
@@ -221,6 +261,11 @@ class Util():
         for keys in self.config.buttons[idx]["hotkeys"]:
             self.press_hold(keys)
     # send_hotkey func from json
+
+    @outware
+    def send_mouse(self, idx: int):
+        pass
+    # send_mouse func from json
 
     @outware
     def loop_up(self, idx: int, extra: str):
@@ -316,3 +361,19 @@ def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = Fa
                 return p.name
     return None
 # end load_port
+
+
+def remove_duplicates(lst: List[Tuple[int, int]]):
+    # Create an empty dictionary to store tuples as keys
+    encountered = {}
+    # Create an empty list to store unique tuples
+    result = []
+    # Iterate through the input list
+    for tup in lst:
+        # If the tuple has not been encountered before,
+        # add it to the dictionary and the result list
+        if tup not in encountered:
+            encountered[tup] = True
+            result.append(tup)
+    # Return the list of unique tuples
+    return result

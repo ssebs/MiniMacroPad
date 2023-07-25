@@ -56,11 +56,13 @@ class MacroDisplay(ttk.Frame):
                 print("  ", end='')
                 print(item)
 
+            is_recording_macro: bool = ("rec" in item["func"])
+
             grid[idx] = ttk.Button(self.container,
                                    text=item['text'].strip(),
                                    bootstyle=(DARK),
                                    command=partial(
-                                       self.handle_press, idx)
+                                       self.handle_press, idx, is_recording_macro)
                                    )
 
             grid[idx].grid(row=r, column=c,
@@ -75,13 +77,14 @@ class MacroDisplay(ttk.Frame):
         return grid
     # end _init_grid
 
-    def handle_press(self, position: int):
+    def handle_press(self, position: int, is_recording_macro: bool):
         # TODO: rename
         """Handle button click on GUI"""
         if self.verbose:
             print(f"clicked {position}")
-        # alt + tab back to whatever the user was doing before
-        self.util.alt_tab()
+        if not is_recording_macro:
+            # alt + tab back to whatever the user was doing before
+            self.util.alt_tab()
         # do function
         self.util.handle_btn_press(position)
     # handle_press
