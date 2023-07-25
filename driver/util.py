@@ -14,6 +14,7 @@ from typing import Tuple, List
 from functools import partial
 
 from enum import Enum
+from questiondisplay import QuestionDisplay
 
 
 class Config():
@@ -227,6 +228,7 @@ class Util():
         def add_pos():
             positions.append(mouse.get_position())
             # custom diag box
+            question_display = QuestionDisplay(root, question="Would you like that to be a left, right, or double click?", answers=["Left", "Right", "Double"])
             # msgbox.askquestion(title="Set Mouse Macro", message="Would you like that to be a left, right, or double click?", )
 
         def leave():
