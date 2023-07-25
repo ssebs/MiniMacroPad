@@ -50,6 +50,11 @@
                 ]
             ],
             "func": "send_hotkey"
+        },
+        {
+            "text": "Mouse macro",
+            "func": "rec_mouse",
+            "mouse_movements": {}
         }
     ]
 }
