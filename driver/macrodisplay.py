@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# macrodisplay.py  - display what the macros actually are on a component
+# macrodisplay.py  - TK Frame main window for the Macro Display
 import time
 
 import ttkbootstrap as ttk

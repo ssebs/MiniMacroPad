@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
-# config.py
+# config.py - Handles config files & handles json load/save
 import os.path
 import json
 
 
 class Config():
-    """Config class
-    Handles config files + loading up the json.
+    """Handles config files & handles json load/save
     Config is accessible via <configObject>.config["KEY"]
+    Params:
+            config_path - name of the config file to use, default to home dir
+            verbose - bool, verbosity
+    Methods:
+        load_config
+        save_config
+        save_default_config
+        get_path
     """
 
     def __init__(self, config_path: str = None, verbose: bool = False):
@@ -62,7 +69,7 @@ class Config():
             raise e
     # load_config
 
-    def save_default_config(self):
+    def save_default_config(self) -> None:
         """Saves sampleconfig.json to default (home) directory"""
         _config = None
         try:
