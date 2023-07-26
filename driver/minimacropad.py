@@ -67,15 +67,14 @@ def main():
 
 def init_arduino(config: Config) -> serial.Serial:
     """
-    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port
+    Initialize serial COM port and return it. Uses SERIAL_QRY to find the port. Show MsgBox if there's an exception.
     Returns:
         Serial object of arduino / teensy
     """
     # Load arduino serial connection
     for tries in range(config.config["RETRY_COUNT"]):
+        # Start stuff we hope to do, raise exceptions if there's an issue
         try:
-            # Start stuff we hope to do
-
             # Get serial port name, if available
             serial_port = get_serial_port_name(
                 name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG
@@ -83,29 +82,27 @@ def init_arduino(config: Config) -> serial.Serial:
             if serial_port is None:
                 raise SerialNotFoundException(
                     f"Failed to load serial port: {config.serial['QUERY']}")
+
             # Get serial connection if we can
             arduino = serial.Serial(port=serial_port, baudrate=config.serial["BAUDRATE"],
                                     timeout=config.serial["TIMEOUT"])
             if arduino is None:
                 raise SerialMountException(
                     f"Failed to mount Serial port: {config.serial['QUERY']}")
-        # end stuff that we hope for
-        # TODO: Cleanup. If you're reading this, sorry
+        # end stuff that we hope to do, handle the above exceptions w/ an error msg
         except serial.SerialException as e:
             print(e)
-            messagebox.showerror(title=MSGBOX_TITLE,
-                                 message=f"{str(e)}\n\nCheck if you have another instance open?")
+            _msg = f"{str(e)}\n\nCheck if you have another instance open?"
+            messagebox.showerror(title=MSGBOX_TITLE, message=_msg)
             sys.exit(0)
         except CustomSerialException as e:
             print(e)
-            do_try_again = messagebox.askyesno(title=MSGBOX_TITLE,
-                                               message=f"{str(e)}\n\nWant to try loading again?")
-            if do_try_again:
+            _msg = f"{str(e)}\n\nWant to try loading again?"
+            if messagebox.askyesno(title=MSGBOX_TITLE, message=_msg):
                 continue
             else:
-                gui_only_mode = messagebox.askyesno(title=MSGBOX_TITLE,
-                                                    message=f"{str(e)}\n\nWant to run in GUI only mode?")
-                if gui_only_mode:
+                _msg = f"{str(e)}\n\nWant to run in GUI only mode?"
+                if messagebox.askyesno(title=MSGBOX_TITLE, message=_msg):
                     return None
                 sys.exit(0)
             sys.exit(0)
@@ -113,7 +110,7 @@ def init_arduino(config: Config) -> serial.Serial:
             print(e)
             raise e
             sys.exit(1)
-        # break if trying succeeds
+        # break the loop if loading succeeds
         break
     return arduino
 # end init_arduino
