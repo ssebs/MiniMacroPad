@@ -47,10 +47,6 @@ def main():
     # For the close icon in the GUI, stop the thread too
     global do_close
     do_close = False
-    # root for the Tk window
-    global root
-
-    # # Actual init stuff # #
 
     # Setup TK window
     root = ttk.Window(themename="darkly")
@@ -66,11 +62,11 @@ def main():
 
     # Handle reading serial data via main_loop
     thread1 = threading.Thread(target=main_loop, args=(
-        arduino, root, window, util), daemon=True)
+        arduino, macro_manager.root_win, window, util), daemon=True)
     thread1.start()
 
     # Start GUI thread
-    root.mainloop()
+    macro_manager.root_win.mainloop()
 # end main
 
 
@@ -125,15 +121,15 @@ def init_arduino(config: Config) -> Serial:
 # end init_arduino
 
 
-def init_gui(util: Util, config: Config) -> MacroDisplay:
+def init_gui(macro_manager: MacroManager) -> MacroDisplay:
     """
     Initialize the gui, uses global root var.
     Returns:
         MacroDisplay object for GUI
     """
-    root = ttk.Window(themename="darkly")
-    macro_display = MacroDisplay(
-        root, grid_size=config.config["SIZE"], buttons=config.buttons, util=util, verbose=DEBUG)
+
+    macro_manager.macro_display = MacroDisplay(
+        macro_manager.root_win, grid_size=macro_manager.config.config["SIZE"], buttons=macro_manager.config.buttons, util=util, verbose=DEBUG)
 
     signal.signal(signal.SIGINT, signal.default_int_handler)
     root.protocol("WM_DELETE_WINDOW", handle_close)
@@ -188,7 +184,7 @@ def main_loop(arduino, root, window, util: Util):
 
                     # Do something based on button that was pressed
                     util.handle_btn_press(btn_pos)
-                    window.display_click(btn_pos)  # display on gui
+                    window.display_press(btn_pos)  # display on gui
                 # end if we got clean data
         except serial.serialutil.SerialException as e:
             print("Device disconnected?")

@@ -8,6 +8,7 @@ from ttkbootstrap.constants import *
 from functools import partial
 
 from util import Util
+from macromanager import MacroManager, Actions
 
 
 class MacroDisplay(ttk.Frame):
@@ -24,15 +25,16 @@ class MacroDisplay(ttk.Frame):
         tbd
     """
 
-    def __init__(self, container: Tk, grid_size: dict, buttons: list, util: Util, verbose: bool = False, **options):
+    def __init__(self, container: Tk, grid_size: dict, buttons: list, macro_manager: MacroManager, verbose: bool = False, **options):
         super().__init__(container, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
-        self.verbose = verbose
-        self.util = util
-        self.buttons = buttons
-        self.truncate_length = 28
         self.container = container
         self.size = grid_size
+        self.buttons = buttons
+        self.macro_manager = macro_manager
+        self.verbose = verbose
+
+        self.truncate_length = 28
         self.grid(column=grid_size['x'], row=grid_size['y'])
         self.macrogrid = self._init_grid()
     # __init__
@@ -62,8 +64,9 @@ class MacroDisplay(ttk.Frame):
                                    text=item['text'].strip(),
                                    bootstyle=(DARK),
                                    command=partial(
-                                       self.handle_press, idx, is_recording_macro)
+                                       self.handle_gui_press, idx, is_recording_macro)
                                    )
+            #    TODO: add keyword args
 
             grid[idx].grid(row=r, column=c,
                            ipadx=5, ipady=5, padx=2, pady=2
@@ -77,20 +80,20 @@ class MacroDisplay(ttk.Frame):
         return grid
     # _init_grid
 
-    def handle_press(self, position: int, is_recording_macro: bool):
-        # TODO: rename
+    def handle_gui_press(self, position: int, do_alt_tab: bool = False):
         """Handle button click on GUI"""
         if self.verbose:
-            print(f"clicked {position}")
-        if not is_recording_macro:
+            print(f"Clicked {position}")
+        if do_alt_tab:
             # alt + tab back to whatever the user was doing before
-            self.util.alt_tab()
+            # self.util.alt_tab()
+            self.macro_manager.run_action(Actions.ALT_TAB)
         # do function
-        self.util.handle_btn_press(position)
-    # handle_press
+        # self.util.handle_btn_press(position)
+        self.macro_manager.run_action(Actions.ALT_TAB, position=position)
+    # handle_gui_press
 
-    def display_click(self, position: int, verbose: bool = False):
-        # TODO: rename
+    def display_press(self, position: int, verbose: bool = False):
         """Display visual click on GUI in `position`"""
         if self.verbose:
             print(f"click - pos: {position}")
@@ -102,4 +105,4 @@ class MacroDisplay(ttk.Frame):
         self.macrogrid[position].configure(bootstyle=PRIMARY)
         time.sleep(.25)
         self.macrogrid[position].configure(bootstyle=DARK)
-    # display_click
+    # display_press
