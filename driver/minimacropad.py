@@ -49,20 +49,23 @@ def main():
     do_close = False
 
     # Setup TK window
-    root = ttk.Window(themename="darkly")
+    _root: Tk = ttk.Window(themename="darkly")
+
     # Setup main macro manager
-    macro_manager = MacroManager(root_win=root, verbose=DEBUG)
+    macro_manager: MacroManager = MacroManager(root_win=_root, verbose=DEBUG)
 
     # Load arduino
-    arduino = init_arduino(macro_manager.config)
+    arduino: Serial = init_arduino(macro_manager.config)
+
+    # Setup main Window
+    macro_window = init_gui(macro_manager)
 
     # Setup Util class - rename this
     util = Util(macro_manager.config, verbose=DEBUG)
-    window = init_gui(macro_manager)
 
     # Handle reading serial data via main_loop
     thread1 = threading.Thread(target=main_loop, args=(
-        arduino, macro_manager.root_win, window, util), daemon=True)
+        arduino, macro_manager.root_win, macro_window, util), daemon=True)
     thread1.start()
 
     # Start GUI thread
@@ -128,31 +131,35 @@ def init_gui(macro_manager: MacroManager) -> MacroDisplay:
         MacroDisplay object for GUI
     """
 
-    macro_manager.macro_display = MacroDisplay(
-        macro_manager.root_win, grid_size=macro_manager.config.config["SIZE"], buttons=macro_manager.config.buttons, util=util, verbose=DEBUG)
+    macro_display = MacroDisplay(
+        container=macro_manager.root_win, macro_manager=macro_manager)
 
     signal.signal(signal.SIGINT, signal.default_int_handler)
-    root.protocol("WM_DELETE_WINDOW", handle_close)
-    root.iconbitmap(resource_path(ICON_PATH))
-    # root.resizable(False, False)
-    root.title("MiniMacroPad")
+    macro_manager.root_win.protocol("WM_DELETE_WINDOW", handle_close)
+    macro_manager.root_win.iconbitmap(resource_path(ICON_PATH))
+    # macro_manager.root_win.resizable(False, False)
+    macro_manager.root_win.title("MiniMacroPad")
 
     posX = None
     posY = None
+    # TODO: Make this easier to read!
     # Set window location + size
-    if config.config["MONITOR"] == -1:
+    if macro_manager.config.config["MONITOR"] == -1:
         # dev mode
-        posX = root.winfo_screenwidth() + 200
-        posY = int(root.winfo_screenheight() / 2) - 200
-    elif config.config["MONITOR"] != 1:
+        posX = macro_manager.root_win.winfo_screenwidth() + 200
+        posY = int(macro_manager.root_win.winfo_screenheight() / 2) - 200
+    elif macro_manager.config.config["MONITOR"] != 1:
         # 2nd monitor
-        posX = root.winfo_screenwidth() + int(root.winfo_screenwidth() / 2)
-        posY = root.winfo_screenheight() - int(root.winfo_screenheight() / 2)
+        posX = macro_manager.root_win.winfo_screenwidth(
+        ) + int(macro_manager.root_win.winfo_screenwidth() / 2)
+        posY = macro_manager.root_win.winfo_screenheight(
+        ) - int(macro_manager.root_win.winfo_screenheight() / 2)
     else:
         # 1st monitor
-        posX = int(root.winfo_screenwidth() / 2)
-        posY = int(root.winfo_screenheight() / 2)
-    root.geometry(f"{config.config['GUI_SIZE']}+{posX}+{posY}")
+        posX = int(macro_manager.root_win.winfo_screenwidth() / 2)
+        posY = int(macro_manager.root_win.winfo_screenheight() / 2)
+    macro_manager.root_win.geometry(
+        f"{macro_manager.config.config['GUI_SIZE']}+{posX}+{posY}")
     return macro_display
 # end init_gui
 
@@ -199,6 +206,7 @@ def main_loop(arduino, root, window, util: Util):
 def handle_close():
     """
     Handles the close button operation, cleanup stuff
+    TODO: Fix this!
     """
     if thread1 is not None:
         do_close = True

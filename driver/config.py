@@ -33,6 +33,7 @@ class Config():
         self.buttons = self.full_config["BUTTONS"]
         self.data = self.full_config["DATA"]
         self.serial = self.config["SERIAL"]
+        self.size = self.config["SIZE"]
     # __init__
 
     def load_config(self) -> dict:

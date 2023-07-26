@@ -6,7 +6,6 @@ from tkinter import Tk
 from serial import Serial
 
 from config import Config
-from macrodisplay import MacroDisplay
 
 
 class Actions(Enum):
@@ -27,16 +26,7 @@ class MacroManager():
 
         # Set root_win from param
         self.root_win: Tk = root_win
-        # Set defaults as None, will be updated later
-        self.arduino_conn: Serial = None
-
-        # Initialize the GUI & save to self.macro_display
-        self.macro_display: MacroDisplay = self.init_gui()
     # __init__
-
-    def init_gui(self) -> MacroDisplay:
-        window = MacroDisplay(
-            container=self.root_win, grid_size=self.config.config["SIZE"], buttons=self.config.buttons, macro_manager=self, verbose=self.verbose)
 
     def run_action(self, action: Actions, position: int = -1):
         print("Running action")
