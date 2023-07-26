@@ -13,7 +13,7 @@ import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
 from ttkbootstrap.constants import *
 from playsound import playsound
-
+from functools import partial
 from macrodisplay import MacroDisplay
 from util import (
     Util, CustomSerialException,
@@ -135,7 +135,8 @@ def init_gui(macro_manager: MacroManager) -> MacroDisplay:
         container=macro_manager.root_win, macro_manager=macro_manager)
 
     signal.signal(signal.SIGINT, signal.default_int_handler)
-    macro_manager.root_win.protocol("WM_DELETE_WINDOW", handle_close)
+    macro_manager.root_win.protocol(
+        "WM_DELETE_WINDOW", partial(handle_close, macro_manager))
     macro_manager.root_win.iconbitmap(resource_path(ICON_PATH))
     # macro_manager.root_win.resizable(False, False)
     macro_manager.root_win.title("MiniMacroPad")
@@ -203,18 +204,18 @@ def main_loop(arduino, root, window, util: Util):
 # end main_loop
 
 
-def handle_close():
+def handle_close(macro_manager: MacroManager):
     """
     Handles the close button operation, cleanup stuff
     TODO: Fix this!
     """
     if thread1 is not None:
         do_close = True
-        root.destroy()
+        macro_manager.root_win.destroy()
         sys.exit(0)
     else:
         print("thread is none")
-        root.destroy()
+        macro_manager.root_win.destroy()
         sys.exit(0)
     # stop thread1
 # end handle_close
