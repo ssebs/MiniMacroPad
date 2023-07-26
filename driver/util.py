@@ -288,19 +288,3 @@ def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = Fa
             if name in p.description:
                 return p.name
     return None
-
-
-def remove_duplicates(lst: List[Tuple[int, int]]):
-    # Create an empty dictionary to store tuples as keys
-    encountered = {}
-    # Create an empty list to store unique tuples
-    result = []
-    # Iterate through the input list
-    for tup in lst:
-        # If the tuple has not been encountered before,
-        # add it to the dictionary and the result list
-        if tup not in encountered:
-            encountered[tup] = True
-            result.append(tup)
-    # Return the list of unique tuples
-    return result

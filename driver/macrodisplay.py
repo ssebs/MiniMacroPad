@@ -62,7 +62,7 @@ class MacroDisplay(ttk.Frame):
                                    text=item['text'].strip(),
                                    bootstyle=(DARK),
                                    command=partial(
-                                       self._handle_gui_press, idx, is_recording_macro)
+                                       self._handle_gui_press, idx, not is_recording_macro)
                                    )
             # TODO: add keyword args to _handle_gui_press
 

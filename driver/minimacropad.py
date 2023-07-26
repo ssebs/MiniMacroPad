@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # minimacropad.py - A python driver to provide functionality to the mini macro pad.
-
-import os
 import sys
-import time
 import signal
 import threading
 
@@ -12,15 +9,15 @@ from serial import Serial
 import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
 from ttkbootstrap.constants import *
-from playsound import playsound
 from functools import partial
-from macrodisplay import MacroDisplay
+
 from util import (
     CustomSerialException,
     SerialNotFoundException, SerialMountException,
     resource_path, get_serial_port_name
 )
 from config import Config
+from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
 
 # TODO: Move these to Util
