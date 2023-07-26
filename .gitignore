@@ -4,3 +4,4 @@ build/
 dist/
 .theia/
 *.ignore
+*.whl
