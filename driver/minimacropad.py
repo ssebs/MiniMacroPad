@@ -5,6 +5,7 @@ import signal
 import threading
 
 from serial import Serial
+import serial
 
 import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
