@@ -16,7 +16,7 @@ from playsound import playsound
 from functools import partial
 from macrodisplay import MacroDisplay
 from util import (
-    Util, CustomSerialException,
+    CustomSerialException,
     SerialNotFoundException, SerialMountException,
     resource_path, get_serial_port_name
 )
@@ -59,9 +59,6 @@ def main():
 
     # Setup main Window
     macro_window = init_gui(macro_manager)
-
-    # Setup Util class - rename this
-    util = Util(macro_manager.config, verbose=DEBUG)
 
     # Handle reading serial data via arduino_listen_loop
     thread1 = threading.Thread(target=arduino_listen_loop, args=(
@@ -200,8 +197,10 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
                         btn_pos = int(str(btn_pos)[-1])
 
                 # Do something based on button that was pressed
-                macro_manager.run_action(action=Actions.BUTTON_PRESS, position=btn_pos)
-                window.display_press(btn_pos)  # display on gui
+                macro_manager.run_action(
+                    action=Actions.BUTTON_PRESS, position=btn_pos)
+                # Display press on GUI
+                window.display_press(btn_pos)
         except serial.serialutil.SerialException as e:
             print("Device disconnected?")
             print(e)

@@ -3,23 +3,20 @@
 import time
 
 import ttkbootstrap as ttk
-from tkinter import StringVar, Tk
+from tkinter import Tk
 from ttkbootstrap.constants import *
 from functools import partial
 
-from util import Util
 from macromanager import MacroManager, Actions
 
 
 class MacroDisplay(ttk.Frame):
     """
-    TK Frame class for the Macro Display
+    TK Frame main window for the Macro Display
     Params:
         container - Tk, root container
-        grid_size - dict, size of the grid in {"x": 3,"y": 4} format
-        buttons - list, list of macro items / button objects
-        util - Util, util object
-        verbose - bool, verbosity
+        macro_manager - MacroManager, reference to the MacroManager
+        verbose - bool [False], verbosity
         **options - other options to be passed to tk
     Methods:
         tbd
@@ -44,7 +41,7 @@ class MacroDisplay(ttk.Frame):
         """
         Initializes the grid.
         Params:
-            verbose - bool [False] add verbosity
+            verbose - bool [False], verbosity
         Returns:
             dict of ttk grid buttons
         """
@@ -82,7 +79,11 @@ class MacroDisplay(ttk.Frame):
     # _init_grid
 
     def _handle_gui_press(self, position: int, do_alt_tab: bool = False):
-        """Handle button click on GUI"""
+        """Handle button click on GUI
+        Params:
+            position - int, position within buttons[] that was pressed
+            do_alt_tab - bool [False], run alt + tab before the macro
+        """
         if self.verbose:
             print(f"Clicked {position}")
         if do_alt_tab:
@@ -93,7 +94,11 @@ class MacroDisplay(ttk.Frame):
     # _handle_gui_press
 
     def display_press(self, position: int, verbose: bool = False):
-        """Display visual click on GUI in `position`"""
+        """Display visual click on GUI in position var
+        Params:
+            position - int, position within buttons[] that was pressed
+            verbose - bool [False], verbosity
+        """
         if self.verbose:
             print(f"click - pos: {position}")
         if position > len(self.macrogrid):
