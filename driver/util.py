@@ -257,9 +257,8 @@ class SerialNotFoundException(CustomSerialException):
 class SerialMountException(CustomSerialException):
     pass
 
-# Helper functions
 
-
+# Helper (util) functions
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(
@@ -270,7 +269,7 @@ def resource_path(relative_path):
 def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
     """
     Gets the COM port as a str that the arduino is connected to
-    params:
+    Params:
         name - name of what you want to match (e.g. COM1)
         is_COM_name - is this a COM name or description? (e.g. COM1 vs USB Serial Device (COM1))
     Returns:
@@ -289,7 +288,6 @@ def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = Fa
             if name in p.description:
                 return p.name
     return None
-# end load_port
 
 
 def remove_duplicates(lst: List[Tuple[int, int]]):

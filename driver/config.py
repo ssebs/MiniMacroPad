@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # config.py
+import os.path
 import json
 
 
@@ -16,29 +17,28 @@ class Config():
             config_path - name of the config file to use, default to home dir
             verbose - bool, verbosity
         """
-        self.verbose = verbose
-        self.default_config_path = "./driver/res/sampleconfig.json"
+        self.verbose: bool = verbose
+        self.default_config_path: str = "./driver/res/sampleconfig.json"
 
-        # If config_path is defined, use it otherwise use default path
+        # If config_path is defined, use it, otherwise use default path
         self.default_path = os.path.expanduser(
             "~") + "/minimacropad-config.json"
-        self.path = config_path if config_path else self.default_path
+        self.path: str = config_path if config_path else self.default_path
 
         # Load JSON config from path, write default if nothing is found
-        self.full_config = self.load_config()
+        self.full_config: dict = self.load_config()
 
         # Shortcuts for accessing
         self.config = self.full_config["CONFIG"]
         self.buttons = self.full_config["BUTTONS"]
         self.data = self.full_config["DATA"]
-
         self.serial = self.config["SERIAL"]
     # __init__
 
     def load_config(self) -> dict:
         """Loads JSON config from self.path
         Returns:
-            dict - JSON config file as a dictionary
+            dict - JSON config as a dictionary
         """
         try:
             with open(self.path, "r") as f:
@@ -75,6 +75,7 @@ class Config():
             print("Failed to load config file")
             print(e)
             raise e
+
         try:
             with open(self.path, "w") as f:
                 f.write(_config)
@@ -84,7 +85,7 @@ class Config():
             raise e
     # save_default_config
 
-    def save_config(self, new_config: Dict = None) -> None:
+    def save_config(self, new_config: dict = None) -> None:
         """Save self.full_configto self.path.
         Params:
             new_config - dict, if present, save that config object to the default config path.
@@ -100,7 +101,7 @@ class Config():
             raise e
 
     def get_path(self) -> str:
-        """Gets the final config path
+        """Gets the config path
         Returns:
             str, config path
         """

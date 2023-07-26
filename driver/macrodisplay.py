@@ -35,7 +35,7 @@ class MacroDisplay(ttk.Frame):
         self.size = grid_size
         self.grid(column=grid_size['x'], row=grid_size['y'])
         self.macrogrid = self._init_grid()
-    # end __init__
+    # __init__
 
     def _init_grid(self, verbose: bool = False) -> dict:
         """
@@ -75,7 +75,7 @@ class MacroDisplay(ttk.Frame):
             else:
                 c += 1
         return grid
-    # end _init_grid
+    # _init_grid
 
     def handle_press(self, position: int, is_recording_macro: bool):
         # TODO: rename
@@ -102,4 +102,4 @@ class MacroDisplay(ttk.Frame):
         self.macrogrid[position].configure(bootstyle=PRIMARY)
         time.sleep(.25)
         self.macrogrid[position].configure(bootstyle=DARK)
-    # click
+    # display_click
