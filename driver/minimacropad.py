@@ -21,7 +21,7 @@ from util import (
     resource_path, get_serial_port_name
 )
 from config import Config
-from macromanager import MacroManager
+from macromanager import MacroManager, Actions
 
 # TODO: Move these to Util
 DEBUG = False
@@ -63,9 +63,10 @@ def main():
     # Setup Util class - rename this
     util = Util(macro_manager.config, verbose=DEBUG)
 
-    # Handle reading serial data via main_loop
-    thread1 = threading.Thread(target=main_loop, args=(
-        arduino, macro_manager.root_win, macro_window, util), daemon=True)
+    # Handle reading serial data via arduino_listen_loop
+    thread1 = threading.Thread(target=arduino_listen_loop, args=(
+        arduino, macro_manager, macro_window), daemon=True)
+    # TODO: add keyword args to above
     thread1.start()
 
     # Start GUI thread
@@ -131,19 +132,23 @@ def init_gui(macro_manager: MacroManager) -> MacroDisplay:
         MacroDisplay object for GUI
     """
 
+    # Create main window
     macro_display = MacroDisplay(
         container=macro_manager.root_win, macro_manager=macro_manager)
 
+    # Set flags for handling closing the window
     signal.signal(signal.SIGINT, signal.default_int_handler)
     macro_manager.root_win.protocol(
         "WM_DELETE_WINDOW", partial(handle_close, macro_manager))
+
+    # Set icon / title
     macro_manager.root_win.iconbitmap(resource_path(ICON_PATH))
     # macro_manager.root_win.resizable(False, False)
     macro_manager.root_win.title("MiniMacroPad")
 
+    # TODO: Make this easier to read!
     posX = None
     posY = None
-    # TODO: Make this easier to read!
     # Set window location + size
     if macro_manager.config.config["MONITOR"] == -1:
         # dev mode
@@ -159,41 +164,44 @@ def init_gui(macro_manager: MacroManager) -> MacroDisplay:
         # 1st monitor
         posX = int(macro_manager.root_win.winfo_screenwidth() / 2)
         posY = int(macro_manager.root_win.winfo_screenheight() / 2)
+
+    # Set position & size
     macro_manager.root_win.geometry(
         f"{macro_manager.config.config['GUI_SIZE']}+{posX}+{posY}")
+
     return macro_display
 # end init_gui
 
 
-def main_loop(arduino, root, window, util: Util):
+def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk):
     """
-    Handles serial comms
+    Handles serial comms & run actions if the arduino sends the right signal
     """
+    # GUI only mode
     if arduino is None:
-        # GUI only mode
         return
+
     while True:
         try:
             data = str(arduino.readline().decode().strip())
-            if data != "":
-                if DEBUG:
-                    print(data)
-                if "log:" in data:
-                    if DEBUG:
-                        print(data)
-                if ":" not in data:
-                    # Get button position from data
-                    # Button position is NOT 0 indexed!
-                    btn_pos = int(data)
-                    if btn_pos > len(util.config.buttons):
-                        # 11 => 1
-                        if len(str(btn_pos)) > 1:
-                            btn_pos = int(str(btn_pos)[-1])
+            if data == "":
+                continue
+            if DEBUG:
+                print(data)
+            if "log:" in data:
+                print(data[4:])
+            if ":" not in data:
+                # Get button position from data
+                # NOTE: button position is NOT 0 indexed!
+                btn_pos = int(data)
+                if btn_pos > len(macro_manager.config.buttons):
+                    # 11 => 1
+                    if len(str(btn_pos)) > 1:
+                        btn_pos = int(str(btn_pos)[-1])
 
-                    # Do something based on button that was pressed
-                    util.handle_btn_press(btn_pos)
-                    window.display_press(btn_pos)  # display on gui
-                # end if we got clean data
+                # Do something based on button that was pressed
+                macro_manager.run_action(action=Actions.BUTTON_PRESS, position=btn_pos)
+                window.display_press(btn_pos)  # display on gui
         except serial.serialutil.SerialException as e:
             print("Device disconnected?")
             print(e)
@@ -201,7 +209,7 @@ def main_loop(arduino, root, window, util: Util):
             return
 
     # end loop
-# end main_loop
+# arduino_listen_loop
 
 
 def handle_close(macro_manager: MacroManager):

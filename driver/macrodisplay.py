@@ -67,7 +67,7 @@ class MacroDisplay(ttk.Frame):
                                    command=partial(
                                        self._handle_gui_press, idx, is_recording_macro)
                                    )
-            #    TODO: add keyword args to _handle_gui_press
+            # TODO: add keyword args to _handle_gui_press
 
             grid[idx].grid(row=r, column=c,
                            ipadx=5, ipady=5, padx=2, pady=2
@@ -87,11 +87,9 @@ class MacroDisplay(ttk.Frame):
             print(f"Clicked {position}")
         if do_alt_tab:
             # alt + tab back to whatever the user was doing before
-            # self.util.alt_tab()
             self.macro_manager.run_action(Actions.ALT_TAB)
-        # do function
-        # self.util.handle_btn_press(position)
-        self.macro_manager.run_action(Actions.ALT_TAB, position=position)
+        # Run the actual action
+        self.macro_manager.run_action(Actions.BUTTON_PRESS, position=position)
     # _handle_gui_press
 
     def display_press(self, position: int, verbose: bool = False):
@@ -104,6 +102,6 @@ class MacroDisplay(ttk.Frame):
             print("  Doing nothing!")
             return
         self.macrogrid[position].configure(bootstyle=PRIMARY)
-        time.sleep(.25)
+        time.sleep(.25)  # TODO: make this a variable
         self.macrogrid[position].configure(bootstyle=DARK)
     # display_press
