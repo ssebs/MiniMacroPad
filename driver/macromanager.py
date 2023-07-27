@@ -54,7 +54,7 @@ class FuncManager():
         if self.verbose:
             print("loopers:")
             for looper in _looper.values():
-                looper.print_str()
+                print(looper)
 
         # Return new dict
         return _looper

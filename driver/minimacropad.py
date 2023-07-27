@@ -15,20 +15,21 @@ from functools import partial
 from util import (
     CustomSerialException,
     SerialNotFoundException, SerialMountException,
-    resource_path, get_serial_port_name,
-    DEBUG, ICON_PATH, SFX_PATH, MSGBOX_TITLE
+    resource_path, get_serial_port_name, ICON_PATH, SFX_PATH, MSGBOX_TITLE
 )
 from config import Config
 from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
 
 
-def main():
-    """
-    Main function
+def main(is_gui_only: bool, is_verbose: bool):
+    """Start initializing the MiniMacroPad
+    Params:
+        is_gui_only - bool, Run in GUI only mode. (Disable serial comms)
+        is_verbose - bool, Enable verbosity
     TODO: Cleanup
     """
-    if DEBUG:
+    if is_verbose:
         print("Driver for macro pad:")
     # # Globals # #
     # Setup Serial comm thread
@@ -41,7 +42,7 @@ def main():
     _root: Tk = ttk.Window(themename="darkly")
 
     # Setup main macro manager
-    macro_manager: MacroManager = MacroManager(root_win=_root, verbose=DEBUG)
+    macro_manager: MacroManager = MacroManager(root_win=_root, verbose=is_verbose)
 
     # Load arduino
     arduino: Serial = init_arduino(macro_manager.config)
@@ -71,8 +72,9 @@ def init_arduino(config: Config) -> Serial:
         # Start stuff we hope to do, raise exceptions if there's an issue
         try:
             # Get serial port name, if available
+            # TODO: Support args here
             serial_port = get_serial_port_name(
-                name=config.serial["QUERY"], is_COM_name=False, verbose=DEBUG
+                name=config.serial["QUERY"], is_COM_name=False, verbose=config.verbose
             )
             if serial_port is None:
                 raise SerialNotFoundException(
@@ -172,7 +174,7 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
             data = str(arduino.readline().decode().strip())
             if data == "":
                 continue
-            if DEBUG:
+            if macro_manager.verbose:
                 print(data)
             if "log:" in data:
                 print(data[4:])
@@ -215,7 +217,3 @@ def handle_close(macro_manager: MacroManager):
         sys.exit(0)
     # stop thread1
 # end handle_close
-
-
-if __name__ == "__main__":
-    main()

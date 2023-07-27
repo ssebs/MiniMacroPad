@@ -7,7 +7,6 @@ import sys
 from tkinter import *
 
 # # Constants # #
-DEBUG = False
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
