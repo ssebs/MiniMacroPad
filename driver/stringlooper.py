@@ -49,15 +49,15 @@ class StringLooper():
 
     def __repr__(self) -> None:
         """Print all relevant data for this looper to stdout"""
-        print(f"{str(self.strings)}, pos: {self.pos}, min: {self.min}, max: {self.max}")
+        print(self.__str__)
     # __repr__
 
     def __str__(self) -> str:
-        """Get the string at self.pos (current position)
+        """Get all relevant data for this looper
         Returns:
-            str, string at current position
+            str, list of strings, positional info as 1 string.
         """
-        return self.get_str()
+        return f"{str(self.strings)}, pos: {self.pos}, min: {self.min}, max: {self.max}"
     # __str__
 
 # StringLooper

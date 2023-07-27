@@ -31,6 +31,7 @@ def main(is_gui_only: bool, is_verbose: bool):
     """
     if is_verbose:
         print("Driver for macro pad:")
+
     # # Globals # #
     # Setup Serial comm thread
     global thread1
@@ -42,10 +43,15 @@ def main(is_gui_only: bool, is_verbose: bool):
     _root: Tk = ttk.Window(themename="darkly")
 
     # Setup main macro manager
-    macro_manager: MacroManager = MacroManager(root_win=_root, verbose=is_verbose)
+    macro_manager: MacroManager = MacroManager(
+        root_win=_root, verbose=is_verbose)
 
     # Load arduino
-    arduino: Serial = init_arduino(macro_manager.config)
+    arduino: Serial = None
+    if not is_gui_only:
+        if is_verbose:
+            print("Loading Serial connection")
+        arduino: Serial = init_arduino(macro_manager.config)
 
     # Setup main Window
     macro_window = init_gui(macro_manager)
