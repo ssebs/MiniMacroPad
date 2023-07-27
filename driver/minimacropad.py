@@ -202,7 +202,7 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
         except serial.serialutil.SerialException as e:
             print("Device disconnected?")
             print(e)
-            handle_close()
+            handle_close(macro_manager)
             return
 
     # end loop
