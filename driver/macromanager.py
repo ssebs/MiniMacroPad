@@ -10,7 +10,7 @@ from tkinter import Tk
 from typing import Tuple, Dict
 
 from config import Config
-from util import StringLooper
+from stringlooper import StringLooper
 
 
 class Actions(Enum):
@@ -35,22 +35,21 @@ class FuncManager():
         # TODO: fix the exception handling! make it return an error instead of raising here
         _looper = {}
         for btn in self.config.buttons:
-            if "extra" in btn:
-                try:
-                    # If the string array name is not in data
-                    if btn["extra"] not in self.config.data:
-                        raise Exception(
-                            f"Failed to find {btn['extra']} in {self.config.data}")
-                    # Get string array from extra variable
-                    tmp_loop = StringLooper(
-                        self.config.data[btn['extra']], btn['extra']
-                    )
-                    # Add to dict
-                    _looper[btn['extra']] = tmp_loop
+            if "extra" not in btn:
+                continue
+            try:
+                # If the array name is not in data
+                if btn["extra"] not in self.config.data:
+                    raise Exception(
+                        f"Failed to find {btn['extra']} in {self.config.data}")
+                # Get array name from extra variable
+                tmp_loop = StringLooper(self.config.data[btn['extra']])
+                # Add to dict
+                _looper[btn['extra']] = tmp_loop
 
-                except Exception as e:
-                    print("Failed to add looper")
-                    raise e
+            except Exception as e:
+                print("Failed to add looper")
+                raise e
 
         if self.verbose:
             print("loopers:")
@@ -134,7 +133,8 @@ class FuncManager():
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
         if self.verbose:
-            print(f"loop_up: {self.loopers[extra].get_str()}, idx: {idx}, extra: {extra}")
+            print(
+                f"loop_up: {self.loopers[extra].get_str()}, idx: {idx}, extra: {extra}")
         keyboard.write(self.loopers[extra].get_str())
     # loop_up func from json
 
@@ -159,7 +159,7 @@ class MacroManager():
     (Instantiates a Config object)
     Params:
         root_win - Tk, root container
-        config_path - str [None], path to config, if None use default.
+        config_path - str [None], path to config, if None use default
         verbose - bool [False], verbosity
     Methods:
         run_action
@@ -170,7 +170,8 @@ class MacroManager():
         # Load json Config from file, takes config_path if provided
         self.config: Config = Config(config_path=config_path, verbose=verbose)
 
-        self.func_manager: FuncManager = FuncManager(config=self.config, verbose=verbose)
+        self.func_manager: FuncManager = FuncManager(
+            config=self.config, verbose=verbose)
 
         # Set root_win from param
         self.root_win: Tk = root_win

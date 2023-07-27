@@ -15,21 +15,12 @@ from functools import partial
 from util import (
     CustomSerialException,
     SerialNotFoundException, SerialMountException,
-    resource_path, get_serial_port_name
+    resource_path, get_serial_port_name,
+    DEBUG, ICON_PATH, SFX_PATH, MSGBOX_TITLE
 )
 from config import Config
 from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
-
-# TODO: Move these to Util
-DEBUG = False
-ICON_PATH = 'bell.ico'
-SFX_PATH = 'snap.mp3'
-# SERIAL_QRY = "Arduino Leonardo"
-# SERIAL_QRY = "USB Serial Device (COM7)"
-# SERIAL_BAUD = 9600
-# SERIAL_TIMEOUT = 0.1
-MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
 
 
 def main():

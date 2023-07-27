@@ -1,54 +1,25 @@
 #!/usr/bin/env python3
 # util.py - Util stuff
-from tkinter import *
-import tkinter.messagebox as msgbox
-import sys
-import json
-import random
-import time
 import os.path
-import keyboard
-import mouse
-from datetime import datetime
 import serial.tools.list_ports
-from typing import Tuple, List, Dict
-from functools import partial
+import sys
 
-from enum import Enum
-from config import Config
+from tkinter import *
 
-
-class StringLooper():
-    def __init__(self, strings: list, name: str):
-        self.strings = strings
-        self.name = name
-        self.max = len(strings) - 1
-        self.min = 0
-        self.pos = 0
-
-    def get_str(self):
-        return self.strings[self.pos]
-
-    def loop_up(self):
-        if self.pos >= self.max:
-            self.pos = 0
-            return
-        self.pos += 1
-
-    def loop_down(self):
-        if self.pos <= 0:
-            self.pos = self.max
-            return
-        self.pos -= 1
-
-    def loop_rand(self):
-        self.pos = random.randint(self.min, self.max)
-
-    def print_str(self):
-        print(f"  {self.name} - pos: {self.pos}, min: {self.min}, max: {self.max}")
+# # Constants # #
+DEBUG = False
+ICON_PATH = 'bell.ico'
+SFX_PATH = 'snap.mp3'
+# SERIAL_QRY = "Arduino Leonardo"
+# SERIAL_QRY = "USB Serial Device (COM7)"
+# SERIAL_BAUD = 9600
+# SERIAL_TIMEOUT = 0.1
+MSGBOX_TITLE = "MiniMacroPad - Serial Exception"
 
 
 # Exceptions
+
+
 class CustomSerialException(Exception):
     pass
 
@@ -63,10 +34,11 @@ class SerialMountException(CustomSerialException):
 
 # Helper (util) functions
 def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+    """Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(
         os.path.abspath(__file__)) + "\\res")
     return os.path.join(base_path, relative_path)
+# resource_path
 
 
 def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = False) -> str:
@@ -91,3 +63,4 @@ def get_serial_port_name(name: str, is_COM_name: bool = True, verbose: bool = Fa
             if name in p.description:
                 return p.name
     return None
+# get_serial_port_name
