@@ -4,9 +4,10 @@ import keyboard
 import mouse
 import time
 
+from datetime import datetime
 from enum import Enum
 from tkinter import Tk
-from typing import Tuple
+from typing import Tuple, Dict
 
 from config import Config
 from util import StringLooper
@@ -202,13 +203,53 @@ class MacroManager():
             if func_name is None or func_name == "err":
                 print(extra)
                 return
-
+            # TODO: support mouse recording
             # Actually run the function, must be defined in FuncManager
             # TODO: try/catch
             self._run_func_from_name(func_name, extra)
+        # TODO: add recording action!
         else:
             print("Must choose from Actions enum in macromanager.py")
     # run_action
+
+    def rec_mouse(self, idx: int):
+        """Record mouse inputs"""
+        positions: Dict[str, str] = {}
+        has_quit: bool = False
+        count: int = 0
+
+        def add_pos(_type: str):
+            # Add mouse position and button click to positions
+            # _type can be: left, right, double, middle
+            x, y = mouse.get_position()
+            now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%Z")
+            positions[str(now)] = {
+                "type": _type,
+                "posx": x,
+                "posy": y,
+            }
+
+        while not has_quit and count < 999999999:
+            # Record user input until they hit "ESC"
+            count += 1
+            if self.verbose:
+                print(f"rec_mouse # {count}")
+            has_quit = keyboard.is_pressed("escape")
+
+            mouse.on_click(partial(add_pos, "left"))
+            mouse.on_middle_click(partial(add_pos, "middle"))
+            mouse.on_right_click(partial(add_pos, "right"))
+            mouse.on_double_click(partial(add_pos, "double"))
+            time.sleep(self.delay)
+
+        keyboard.unhook_all()
+        mouse.unhook_all()
+        if self.verbose:
+            print("Positions")
+            print(positions)
+        self.config.full_config["BUTTONS"][idx]["mouse_movements"] = positions
+        self.config.save_config()
+    # rec_mouse
 
     def _get_func_from_pos(self) -> Tuple[str, str]:
         """Get function name from position within buttons[] from config.
