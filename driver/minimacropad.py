@@ -22,7 +22,7 @@ from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
 
 # TODO: Move these to Util
-DEBUG = True
+DEBUG = False
 ICON_PATH = 'bell.ico'
 SFX_PATH = 'snap.mp3'
 # SERIAL_QRY = "Arduino Leonardo"
