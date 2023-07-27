@@ -9,6 +9,7 @@ from tkinter import Tk
 from typing import Tuple
 
 from config import Config
+from util import StringLooper
 
 
 class Actions(Enum):
@@ -21,10 +22,43 @@ class FuncManager():
     TODO: Move to own file
     """
 
-    def __init__(self, config: Config, default_delay: float = 0.2):
-        self.config = config
-        self.default_delay = default_delay
+    def __init__(self, config: Config, default_delay: float = 0.2, verbose: bool = False):
+        self.verbose: bool = verbose
+        self.config: Config = config
+        self.default_delay: float = default_delay
+        self.loopers: dict = self._parse_loopers()
     # __init__
+
+    def _parse_loopers(self) -> dict:
+        """parse json to create string loopers"""
+        # TODO: fix the exception handling! make it return an error instead of raising here
+        _looper = {}
+        for btn in self.config.buttons:
+            if "extra" in btn:
+                try:
+                    # If the string array name is not in data
+                    if btn["extra"] not in self.config.data:
+                        raise Exception(
+                            f"Failed to find {btn['extra']} in {self.config.data}")
+                    # Get string array from extra variable
+                    tmp_loop = StringLooper(
+                        self.config.data[btn['extra']], btn['extra']
+                    )
+                    # Add to dict
+                    _looper[btn['extra']] = tmp_loop
+
+                except Exception as e:
+                    print("Failed to add looper")
+                    raise e
+
+        if self.verbose:
+            print("loopers:")
+            for looper in _looper.values():
+                looper.print_str()
+
+        # Return new dict
+        return _looper
+    # _parse_loopers
 
     def run_alt_tab(self, delay: float = None):
         _delay = delay if delay else self.default_delay
@@ -58,11 +92,62 @@ class FuncManager():
                 keyboard.release(key)
     # _press_and_hold
 
+    def prepost(func):
+        """wrapper function"""
+        def outware(*args):
+            self = args[0]
+            _idx = args[1]
+
+            if "pre" in self.config.buttons[_idx]:
+                for keys in self.config.buttons[_idx]["pre"]:
+                    if self.verbose:
+                        print(f"pre - pressing {'+'.join(keys)}")
+                    self._press_and_hold(keys)
+            func(*args)
+            if "post" in self.config.buttons[_idx]:
+                for keys in self.config.buttons[_idx]["post"]:
+                    if self.verbose:
+                        print(f"post - pressing {'+'.join(keys)}")
+                    self._press_and_hold(keys)
+        return outware
+    # wrapper func to handle pre/post hotkeys
+
     # # All send_<blah> functions should be exposed to the user somehow, this is what they'll put in the configs # #
 
+    @prepost
     def send_text(self, idx: int):
         keyboard.write(self.config.buttons[idx]["text"])
     # send_text
+
+    @prepost
+    def send_hotkey(self, idx: int):
+        # TODO: fix exception
+        if "hotkeys" not in self.config.buttons[idx]:
+            raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
+
+        for keys in self.config.buttons[idx]["hotkeys"]:
+            self._press_and_hold(keys)
+    # send_hotkey func from json
+
+    @prepost
+    def loop_up(self, idx: int, extra: str):
+        self.loopers[extra].loop_up()
+        if self.verbose:
+            print(f"loop_up: {self.loopers[extra].get_str()}, idx: {idx}, extra: {extra}")
+        keyboard.write(self.loopers[extra].get_str())
+    # loop_up func from json
+
+    @prepost
+    def loop_down(self, idx: int, extra: str):
+        self.loopers[extra].loop_down()
+        keyboard.write(self.loopers[extra].get_str())
+    # loop_down func from json
+
+    @prepost
+    def loop_rand(self, idx: int, extra: str):
+        self.loopers[extra].loop_rand()
+        keyboard.write(self.loopers[extra].get_str())
+    # loop_rand func from json
 
 # FuncManager
 
@@ -84,7 +169,7 @@ class MacroManager():
         # Load json Config from file, takes config_path if provided
         self.config: Config = Config(config_path=config_path, verbose=verbose)
 
-        self.func_manager: FuncManager = FuncManager(config=self.config)
+        self.func_manager: FuncManager = FuncManager(config=self.config, verbose=verbose)
 
         # Set root_win from param
         self.root_win: Tk = root_win
@@ -101,7 +186,6 @@ class MacroManager():
             action - Actions(Enum), action type to run
             position - int [-1], position where to call the action function from
         """
-        print("Running action")
         if action == Actions.ALT_TAB:
             if self.verbose:
                 print("Running alt tab")
@@ -109,7 +193,7 @@ class MacroManager():
         elif action == Actions.BUTTON_PRESS:
             # TODO: make sure it's not -1
             if self.verbose:
-                print("Running button press")
+                print(f"Running button press for {position}")
             self.last_pressed_pos = position
 
             # Get function name from position within buttons[] from config
@@ -122,8 +206,6 @@ class MacroManager():
             # Actually run the function, must be defined in FuncManager
             # TODO: try/catch
             self._run_func_from_name(func_name, extra)
-
-            print(f"btn press: {position}")
         else:
             print("Must choose from Actions enum in macromanager.py")
     # run_action
