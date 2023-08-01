@@ -15,17 +15,24 @@ A python TK GUI provides functionality to the mini macro pad. All driver related
 ![screenshot](./img/mmpscreenshot.png)
 > This screenshot may be out of date.
 
-## Install dependencies
-- python3
-- `cd driver/`
-    - `python3 -m venv venv`
-    - `.\venv\Scripts\Activate.ps1`
-      - This is for windows
-    - `pip install -r requirements.txt`
+## Setup environment
+> This is for windows
+
+- Install [Python3](https://www.python.org/downloads/windows/)
+- Clone this repo / download & extract zip
+  - https://github.com/ssebs/MiniMacroPad (https)
+  - git@github.com:ssebs/MiniMacroPad.git (ssh)
+- `PS> cd mmp/`
+- `PS driver> python3 -m venv venv`
+- `PS driver> .\venv\Scripts\Activate.ps1`
+  - `(venv) PS driver> pip install -r requirements.txt`
+
+### Running in dev
+- Once in a virtual environment (venv)
+  - `(venv) PS driver> python minimacropad.py`
 
 ### Building the .exe
-- `cd driver/`
-- `pyinstaller minimacropad.spec`
+- `(venv) PS driver> pyinstaller minimacropad.spec`
     - Built file is under `./dist/`
     - Run this .exe
 
@@ -33,12 +40,6 @@ A python TK GUI provides functionality to the mini macro pad. All driver related
 - Hit `WIN + R`
   - Enter `shell:startup` in the dialog, hit enter to open the folder
   - Copy the .exe file to this folder
-
-### Running in dev
-- Once in a virtual environment (venv)
-  - `python3 driver/minimacropad.py`
-- If you'd like to enable verbosity, replace the `DEBUG` variable in `minimacropad.py`.
-  - > This will be updated... at some point
 
 ## Usage - using the MiniMacroPad
 Once the arduino has been all setup & is connected OK, you'll need to run the driver exe once before continuing.

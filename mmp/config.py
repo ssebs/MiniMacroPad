@@ -25,7 +25,7 @@ class Config():
             verbose - bool, verbosity
         """
         self.verbose: bool = verbose
-        self.default_config_path: str = "./driver/res/sampleconfig.json"
+        self.default_config_path: str = "./res/sampleconfig.json"
 
         # If config_path is defined, use it, otherwise use default path
         self.default_path = os.path.expanduser(
