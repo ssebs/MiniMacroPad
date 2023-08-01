@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # __init__.py - minimacropad driver python pkg
 from argparse import ArgumentParser
-import minimacropad
+import mmp
 
+# https://stackoverflow.com/a/23891673
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 if __name__ == "__main__":
     """Parse args & run main"""
@@ -16,5 +20,5 @@ if __name__ == "__main__":
                         action="store_true", help=verbose_help, default=False)
 
     args = parser.parse_args()
-    minimacropad.main(is_gui_only=args.gui_only, is_verbose=args.verbose)
+    mmp.main(is_gui_only=args.gui_only, is_verbose=args.verbose)
 # __main__
