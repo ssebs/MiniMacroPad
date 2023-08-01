@@ -32,7 +32,8 @@ A python TK GUI provides functionality to the mini macro pad. All driver related
   - `(venv) PS driver> python minimacropad.py`
 
 ### Building the .exe
-- `(venv) PS driver> pyinstaller minimacropad.spec`
+- Update the mmp.spec file to match your folder!
+- `(venv) PS driver> pyinstaller mmp.spec`
     - Built file is under `./dist/`
     - Run this .exe
 
