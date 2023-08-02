@@ -59,8 +59,42 @@
                 "value": 0.2
             },
             {
+                "type": "KB_SEND_LOOP",
+                "value": "FRUIT"
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
+                "type": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ],
+        "Undo": [
+            {
+                "type": "KB_SEND_HOTKEY",
+                "value": [
+                    "ctrl",
+                    "z"
+                ]
+            }
+        ],
+        "Open Startup Folder": [
+            {
+                "type": "KB_SEND_HOTKEY",
+                "value": [
+                    "windows",
+                    "r"
+                ]
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
                 "type": "KB_SEND_STR",
-                "value": "ggwp"
+                "value": "shell:startup"
             },
             {
                 "type": "DELAY",
