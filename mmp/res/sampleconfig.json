@@ -20,6 +20,58 @@
             "orange"
         ]
     },
+    "ACTIONS": {
+        "ggwp": [
+            {
+                "type": "KB_SEND_HOTKEY",
+                "value": [
+                    "shift",
+                    "enter"
+                ]
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
+                "type": "KB_SEND_STR",
+                "value": "ggwp"
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
+                "type": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ],
+        "VAL loop": [
+            {
+                "type": "KB_SEND_HOTKEY",
+                "value": [
+                    "shift",
+                    "enter"
+                ]
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
+                "type": "KB_SEND_STR",
+                "value": "ggwp"
+            },
+            {
+                "type": "DELAY",
+                "value": 0.2
+            },
+            {
+                "type": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ]
+    },
     "BUTTONS": [
         {
             "text": "Test\n",

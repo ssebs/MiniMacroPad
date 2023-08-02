@@ -19,6 +19,7 @@ List of work to be done for this project.
 ## Tech Debt
 - [ ] Stop using global vars
 - [ ] Continue refactor to simplify the code
+- [ ] Fix `python -m mmp` not working
 - [ ] Change how the pre/func/post works
   - [ ] pre/post only allow for holding keys
   - [ ] not easy to support mouse

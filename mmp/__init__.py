@@ -8,7 +8,8 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-if __name__ == "__main__":
+
+def run():
     """Parse args & run main"""
     gui_only_help = "Don't try to connect to a Serial hardware device, but still open the GUI MacroPad."
     verbose_help = "Add verbose output. Useful for debugging."
@@ -21,4 +22,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     mmp.main(is_gui_only=args.gui_only, is_verbose=args.verbose)
+
+
+if __name__ == "__main__":
+    run()
 # __main__
