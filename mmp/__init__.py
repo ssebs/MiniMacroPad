@@ -18,13 +18,12 @@ def run():
     parser = ArgumentParser(description="MiniMacroPad - GUI")
     parser.add_argument("-g", "--gui-only", "--no-arduino",
                         action="store_true", help=gui_only_help, default=False)
-    parser.add_argument("-m", "--monitor",
-                        action="store_const", help=monitor_help, default=1)
+    parser.add_argument("-m", "--monitor", help=monitor_help, default=None)
     parser.add_argument("-v", "--verbose",
                         action="store_true", help=verbose_help, default=False)
 
     args = parser.parse_args()
-    mmp.main(is_gui_only=args.gui_only, monitor=args.monitor, is_verbose=args.verbose)
+    mmp.main(is_gui_only=args.gui_only, monitor_num=args.monitor, is_verbose=args.verbose)
 
 
 if __name__ == "__main__":

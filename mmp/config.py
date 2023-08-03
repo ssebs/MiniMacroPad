@@ -94,7 +94,7 @@ class Config():
     # save_default_config
 
     def save_config(self, new_config: dict = None) -> None:
-        """Save self.full_configto self.path.
+        """Save self.full_config to self.path.
         Params:
             new_config - dict, if present, save that config object to the default config path.
         """

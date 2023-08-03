@@ -7,10 +7,11 @@ import threading
 from serial import Serial
 import serial
 
+from functools import partial
 import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
 from ttkbootstrap.constants import *
-from functools import partial
+from typing import Optional
 
 from util import (
     CustomSerialException,
@@ -22,11 +23,11 @@ from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
 
 
-def main(is_gui_only: bool, monitor: int, is_verbose: bool):
+def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
     """Start initializing the MiniMacroPad
     Params:
         is_gui_only - bool, Run in GUI only mode. (Disable serial comms)
-        monitor - int, Which monitor to show the GUI on
+        monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config
         is_verbose - bool, Enable verbosity
     TODO: Cleanup
     """
@@ -55,7 +56,7 @@ def main(is_gui_only: bool, monitor: int, is_verbose: bool):
         arduino: Serial = init_arduino(macro_manager.config)
 
     # Setup main Window
-    macro_window = init_gui(macro_manager)
+    macro_window = init_gui(macro_manager=macro_manager, monitor_num=monitor_num)
 
     # Handle reading serial data via arduino_listen_loop
     thread1 = threading.Thread(target=arduino_listen_loop, args=(
@@ -120,12 +121,20 @@ def init_arduino(config: Config) -> Serial:
 # end init_arduino
 
 
-def init_gui(macro_manager: MacroManager) -> MacroDisplay:
+def init_gui(macro_manager: MacroManager, monitor_num: Optional[int]) -> MacroDisplay:
     """
     Initialize the gui, uses global root var.
+    Params:
+        macro_manager - MacroManager, instance of the MacroManager class that's used elsewhere in the program
+        monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config
     Returns:
         MacroDisplay object for GUI
     """
+
+    # Save monitor_num in the config file if they've defined it.
+    if monitor_num:
+        macro_manager.config.config["MONITOR"] = int(monitor_num)
+        macro_manager.config.save_config()
 
     # Create main window
     macro_display = MacroDisplay(
