@@ -22,10 +22,11 @@ from macrodisplay import MacroDisplay
 from macromanager import MacroManager, Actions
 
 
-def main(is_gui_only: bool, is_verbose: bool):
+def main(is_gui_only: bool, monitor: int, is_verbose: bool):
     """Start initializing the MiniMacroPad
     Params:
         is_gui_only - bool, Run in GUI only mode. (Disable serial comms)
+        monitor - int, Which monitor to show the GUI on
         is_verbose - bool, Enable verbosity
     TODO: Cleanup
     """
