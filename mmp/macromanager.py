@@ -9,14 +9,14 @@ from enum import Enum
 from tkinter import Tk
 from typing import Tuple, Dict, List, Any
 
-from config import Config
-from stringlooper import StringLooper
-from actionmanager import ActionManager
+from mmp.config import Config
+from mmp.stringlooper import StringLooper
+from mmp.actionmanager import ActionManager
 
 
 class FuncManager():
-    """The actual functionality for the Macros
-    TODO: Move to own file
+    """
+    NOTE: This is being replaced by ActionManager! This is only for reference while implementing the looper stuff
     """
 
     def __init__(self, config: Config, default_delay: float = 0.2, verbose: bool = False):
@@ -93,44 +93,6 @@ class FuncManager():
                 keyboard.release(key)
     # _press_and_hold
 
-    def prepost(func):
-        """wrapper function"""
-        def outware(*args):
-            self = args[0]
-            _idx = args[1]
-
-            if "pre" in self.config.buttons[_idx]:
-                for keys in self.config.buttons[_idx]["pre"]:
-                    if self.verbose:
-                        print(f"pre - pressing {'+'.join(keys)}")
-                    self._press_and_hold(keys)
-            func(*args)
-            if "post" in self.config.buttons[_idx]:
-                for keys in self.config.buttons[_idx]["post"]:
-                    if self.verbose:
-                        print(f"post - pressing {'+'.join(keys)}")
-                    self._press_and_hold(keys)
-        return outware
-    # wrapper func to handle pre/post hotkeys
-
-    # # All send_<blah> functions should be exposed to the user somehow, this is what they'll put in the configs # #
-
-    @prepost
-    def send_text(self, idx: int):
-        keyboard.write(self.config.buttons[idx]["text"])
-    # send_text
-
-    @prepost
-    def send_hotkey(self, idx: int):
-        # TODO: fix exception
-        if "hotkeys" not in self.config.buttons[idx]:
-            raise Exception(f"Hotkeys not defined in BUTTONS[{idx}]")
-
-        for keys in self.config.buttons[idx]["hotkeys"]:
-            self._press_and_hold(keys)
-    # send_hotkey func from json
-
-    @prepost
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
         if self.verbose:
@@ -139,13 +101,11 @@ class FuncManager():
         keyboard.write(self.loopers[extra].get_str())
     # loop_up func from json
 
-    @prepost
     def loop_down(self, idx: int, extra: str):
         self.loopers[extra].loop_down()
         keyboard.write(self.loopers[extra].get_str())
     # loop_down func from json
 
-    @prepost
     def loop_rand(self, idx: int, extra: str):
         self.loopers[extra].loop_rand()
         keyboard.write(self.loopers[extra].get_str())
@@ -155,44 +115,42 @@ class FuncManager():
 
 
 class MacroManager():
-    """
-    Manager for the Macros for use with the MiniMacroPad
-    (Instantiates Config, FuncManager objects)
-    Params:
-        root_win - Tk, root container
-        config_path - str [None], path to config, if None use default
-        verbose - bool [False], verbosity
-    Methods:
-        run_action
-    """
+    """Manager for the Macros for use with the MiniMacroPad"""
 
     def __init__(self, root_win: Tk, config_path: str = None, verbose: bool = False):
+        """Create MacroManager
+        (Instantiates Config, ActionManager objects)
+            Params:
+                root_win - Tk, root container
+                config_path - str [None], path to config, if None use default
+                verbose - bool [False], verbosity
+            Methods that you should use:
+                run_action
+        """
         self.verbose: bool = verbose
+
         # Load json Config from file, takes config_path if provided
         self.config: Config = Config(config_path=config_path, verbose=verbose)
 
+        # Setup the class that will run the macro itself
         self.action_manager: ActionManager = ActionManager(self.config, verbose=verbose)
-
-        # self.func_manager: FuncManager = FuncManager(
-        #     config=self.config, verbose=verbose)
 
         # Set root_win from param
         self.root_win: Tk = root_win
 
-        # TODO: replace this comment
+        # The last pressed button position on the macro pad
         self.last_pressed_pos = -1
-        self.delay = 0.02  # seconds
     # __init__
 
     def run_action(self, position: int = -1, action_name: str = None, value: Any = None):
         """Run an action depending on the action type
-        TODO: reimplement this to use ACTIONS instead of BUTTONS
+        TODO: support delays here (e.g. alt tab)
         Params:
             position - int [-1], position where to call the action function from
         """
         if self.verbose:
             print(f"Running button press for {position}")
-        
+
         # Run action_name if defined, don't use the button position at all!
         if action_name:
             if value is None:
@@ -200,9 +158,14 @@ class MacroManager():
             self.action_manager.actions[action_name](value)
             return
 
+        # Otherwise, run the action from the last pressed position
         self.last_pressed_pos = position
-
         action_name, action_items = self._get_action_from_pos()
+        if action_name == "err":
+            raise Exception(action_items)
+        elif action_items is None:
+            raise Exception(f"Could not get action at pos: {position}. Make sure it's in ACTIONS in the config. Or is it 0? It should start at 1")
+
         # For every action in action_items, run the func
         for action in action_items:
             # action: Dict[str, any]
@@ -210,22 +173,15 @@ class MacroManager():
             func_value = action["value"]
             self.action_manager.actions[func_name](func_value)
 
-        # # Get function name from position within buttons[] from config
-        # func_name, extra = self._get_func_from_pos()
-        # # Print error if there is one and return
-        # if func_name is None or func_name == "err":
-        #     print(extra)
-        #     return
         # # TODO: support mouse recording
-        # # Actually run the function, must be defined in FuncManager
         # # TODO: try/catch
-        # self._run_func_from_name(func_name, extra)
-        # # TODO: add recording action!
-        
+        # # TODO: add recording action for KB!
     # run_action
 
     def rec_mouse(self, idx: int):
-        """Record mouse inputs"""
+        """Record mouse inputs
+        TODO: Reimplement
+        """
         positions: Dict[str, str] = {}
         has_quit: bool = False
         count: int = 0
@@ -252,7 +208,7 @@ class MacroManager():
             mouse.on_middle_click(partial(add_pos, "middle"))
             mouse.on_right_click(partial(add_pos, "right"))
             mouse.on_double_click(partial(add_pos, "double"))
-            time.sleep(self.delay)
+            time.sleep(0.02)
 
         keyboard.unhook_all()
         mouse.unhook_all()
@@ -284,57 +240,5 @@ class MacroManager():
                 break
         return (_action_matched_key, _action)
     # _get_action_from_pos
-
-    def _get_func_from_pos(self) -> Tuple[str, str]:
-        """Get function name from position within actions from config.
-        Errors will result in returning ("err", msg)
-        Returns:
-            Tuple[str, str] - (func, value) func is actionmanager.actions's key name, value is the args
-        """
-        func_name = None
-        value = None
-        # Error if the user hit a button that was bigger than actions, so we can't call anything
-        if self.last_pressed_pos > len(self.config.actions.keys()):
-            _msg = (
-                "Hit a button that's not defined in the config file!"
-                f"pos: {self.last_pressed_pos} larger than buttons length"
-                "Doing nothing"
-            )
-            return ("err", _msg)
-
-        # Get function name + value from actions
-        for idx, item in enumerate(self.config.actions.values, start=1):
-            if idx == self.last_pressed_pos:
-                func_name = item["func"]
-                if "extra" in item:
-                    extra = item["extra"]
-                break
-        return (func_name, value)
-    # _get_func_from_pos
-
-    def _run_func_from_name(self, func_name: str, extra: str):
-        """Run the actual function with or without extra params from func_name
-        Params:
-            func_name - str, function name that must match a method in FuncManager
-            extra - str [None], extra params for func_name
-        """
-
-        # Get function from string, this must match!
-        # TODO: try/catch? or return err
-        try:
-            _func = getattr(self.func_manager, func_name)
-        except AttributeError:
-            # TODO: show messagebox?
-            print(f"{func_name} has not been defined in FuncManager!")
-            return
-
-        # Call function, with params if extra is defined
-        # - 1 since the button pos is not 0 indexed
-        if extra is None:
-            _func(self.last_pressed_pos - 1)
-        else:
-            _func(self.last_pressed_pos - 1, extra)
-    # _run_func_from_name
-
 
 # MacroManager

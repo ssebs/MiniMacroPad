@@ -7,7 +7,7 @@ from tkinter import Tk
 from ttkbootstrap.constants import *
 from functools import partial
 
-from macromanager import MacroManager
+from mmp.macromanager import MacroManager
 
 
 class MacroDisplay(ttk.Frame):
@@ -63,7 +63,7 @@ class MacroDisplay(ttk.Frame):
                                    text=item.strip(),
                                    bootstyle=(DARK),
                                    command=partial(
-                                       self._handle_gui_press, idx, do_alt_tab)
+                                       self._handle_gui_press, position=idx, do_alt_tab=True)
                                    )
             # TODO: add keyword args to _handle_gui_press
 
@@ -81,6 +81,7 @@ class MacroDisplay(ttk.Frame):
 
     def _handle_gui_press(self, position: int, do_alt_tab: bool = False):
         """Handle button click on GUI
+        TODO: fix desc
         Params:
             position - int, position within buttons[] that was pressed
             do_alt_tab - bool [False], run alt + tab before the macro
@@ -89,8 +90,11 @@ class MacroDisplay(ttk.Frame):
             print(f"Clicked {position}")
         if do_alt_tab:
             # alt + tab back to whatever the user was doing before
-            self.macro_manager.run_action(action_name="KB_SEND_STR", value="test")
-        
+            self.macro_manager.run_action(
+                action_name="KB_SEND_HOTKEY",
+                value=["alt", "tab"]
+            )
+
         # Run the actual action
         self.macro_manager.run_action(position=position)
     # _handle_gui_press

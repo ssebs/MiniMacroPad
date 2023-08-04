@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # __init__.py - minimacropad driver python pkg
 from argparse import ArgumentParser
-import mmp
+import mmp.minimacropad
 
 # https://stackoverflow.com/a/23891673
 import sys
@@ -30,7 +30,7 @@ def run():
     )
 
     args = parser.parse_args()
-    mmp.main(is_gui_only=args.gui_only, monitor_num=args.monitor, is_verbose=args.verbose)
+    mmp.minimacropad.main(is_gui_only=args.gui_only, monitor_num=args.monitor, is_verbose=args.verbose)
 # run
 
 

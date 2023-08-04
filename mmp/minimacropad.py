@@ -13,15 +13,15 @@ from tkinter import Tk, messagebox
 from ttkbootstrap.constants import *
 from typing import Optional
 
-from util import (
+from mmp.util import (
     CustomSerialException,
     SerialNotFoundException, SerialMountException,
     resource_path, get_serial_port_name, ICON_PATH, SFX_PATH, MSGBOX_TITLE
 )
-from config import Config
-from macrodisplay import MacroDisplay
-from guimanager import GUIManager
-from macromanager import MacroManager
+from mmp.config import Config
+from mmp.macrodisplay import MacroDisplay
+from mmp.guimanager import GUIManager
+from mmp.macromanager import MacroManager
 
 
 def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):

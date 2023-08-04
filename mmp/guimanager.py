@@ -4,9 +4,9 @@ import signal
 
 from typing import Optional
 
-from macrodisplay import MacroDisplay
-from macromanager import MacroManager
-from util import (
+from mmp.macrodisplay import MacroDisplay
+from mmp.macromanager import MacroManager
+from mmp.util import (
     resource_path, ICON_PATH
 )
 

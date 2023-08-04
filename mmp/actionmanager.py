@@ -9,8 +9,8 @@ from enum import Enum, auto
 from tkinter import Tk
 from typing import Tuple, Dict, List
 
-from config import Config
-from stringlooper import StringLooper
+from mmp.config import Config
+from mmp.stringlooper import StringLooper
 
 
 class ActionManager():
@@ -26,14 +26,16 @@ class ActionManager():
         self.config: Config = config
         self.default_delay: float = default_delay
         # self.loopers: Dict[StringLooper] = self._parse_loopers()
+
+        # ACTION_NAME:function mapping
         self.actions = {
             "DELAY": self.do_delay,
             "KB_SEND_HOTKEY": self.do_kb_send_hotkey,
             "KB_SEND_STR": self.do_kb_send_str,
             # "KB_SEND_LOOP": replace,
-            # "KB_KEY_PRESS": replace,
-            # "KB_KEY_DOWN": replace,
-            # "KB_KEY_UP": replace,
+            "KB_KEY_PRESS": self.do_kb_key_press,
+            "KB_KEY_DOWN": self.do_kb_key_down,
+            "KB_KEY_UP": self.do_kb_key_up,
             # "MOUSE_CLICK": replace,
             # "MOUSE_DOWN": replace,
             # "MOUSE_UP": replace,
@@ -43,6 +45,7 @@ class ActionManager():
     # __init__
 
     # TODO: Implement this!
+    # TODO: Create another wrapper for logging actions
     # def set_delay(func):
     #     """wrapper function that sets the default delay if none has been set"""
     #     def outware(*args):
@@ -132,8 +135,8 @@ class ActionManager():
             keyboard.press(key)
 
         # Wait
-
         time.sleep(_delay)
+
         # Release all keys
         for key in hotkey:
             keyboard.release(key)
@@ -146,3 +149,28 @@ class ActionManager():
         """
         _delay = delay if delay else self.default_delay
         keyboard.write(string_to_send, delay)
+    # do_kb_send_str
+
+    def do_kb_key_press(self, key_to_press: str):
+        """Press and release a keyboard button
+        Params:
+            key_to_press - str, The keyboard button to press and release
+        """
+        keyboard.press_and_release(key_to_press)
+    # do_kb_key_press
+
+    def do_kb_key_down(self, key_to_press: str):
+        """Press down a keyboard button
+        Params:
+            key_to_press - str, The keyboard button to press
+        """
+        keyboard.press(key_to_press)
+    # do_kb_key_down
+
+    def do_kb_key_up(self, key_to_release: str):
+        """Release a keyboard button
+        Params:
+            key_to_release - str, The keyboard button to release
+        """
+        keyboard.release(key_to_release)
+    # do_kb_key_up
