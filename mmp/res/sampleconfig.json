@@ -23,57 +23,57 @@
     "ACTIONS": {
         "ggwp": [
             {
-                "type": "KB_SEND_HOTKEY",
+                "func": "KB_SEND_HOTKEY",
                 "value": [
                     "shift",
                     "enter"
                 ]
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_SEND_STR",
+                "func": "KB_SEND_STR",
                 "value": "ggwp"
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_KEY_PRESS",
+                "func": "KB_KEY_PRESS",
                 "value": "enter"
             }
         ],
         "VAL loop": [
             {
-                "type": "KB_SEND_HOTKEY",
+                "func": "KB_SEND_HOTKEY",
                 "value": [
                     "shift",
                     "enter"
                 ]
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_SEND_LOOP",
+                "func": "KB_SEND_LOOP",
                 "value": "FRUIT"
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_KEY_PRESS",
+                "func": "KB_KEY_PRESS",
                 "value": "enter"
             }
         ],
         "Undo": [
             {
-                "type": "KB_SEND_HOTKEY",
+                "func": "KB_SEND_HOTKEY",
                 "value": [
                     "ctrl",
                     "z"
@@ -82,26 +82,26 @@
         ],
         "Open Startup Folder": [
             {
-                "type": "KB_SEND_HOTKEY",
+                "func": "KB_SEND_HOTKEY",
                 "value": [
                     "windows",
                     "r"
                 ]
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_SEND_STR",
+                "func": "KB_SEND_STR",
                 "value": "shell:startup"
             },
             {
-                "type": "DELAY",
+                "func": "DELAY",
                 "value": 0.2
             },
             {
-                "type": "KB_KEY_PRESS",
+                "func": "KB_KEY_PRESS",
                 "value": "enter"
             }
         ]

@@ -25,7 +25,7 @@ class ActionManager():
         self.verbose: bool = verbose
         self.config: Config = config
         self.default_delay: float = default_delay
-        self.loopers: Dict[StringLooper] = self._parse_loopers()
+        # self.loopers: Dict[StringLooper] = self._parse_loopers()
         self.actions = {
             "DELAY": self.do_delay,
             "KB_SEND_HOTKEY": self.do_kb_send_hotkey,
@@ -128,18 +128,18 @@ class ActionManager():
         _delay = delay if delay else self.default_delay
 
         # Press all keys down
-        for key in keys:
+        for key in hotkey:
             keyboard.press(key)
 
         # Wait
 
         time.sleep(_delay)
         # Release all keys
-        for key in keys:
+        for key in hotkey:
             keyboard.release(key)
     # do_kb_send_hotkey
 
-    def do_kb_send_str(self, string_to_send: str):
+    def do_kb_send_str(self, string_to_send: str, delay: float = None):
         """Write string_to_send using the keyboard
         Params:
             string_to_send - str, The string to write with the keyboard

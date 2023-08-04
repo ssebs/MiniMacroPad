@@ -7,11 +7,11 @@ import time
 from datetime import datetime
 from enum import Enum
 from tkinter import Tk
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List, Any
 
 from config import Config
 from stringlooper import StringLooper
-from actionmanager import Actions
+from actionmanager import ActionManager
 
 
 class FuncManager():
@@ -171,8 +171,10 @@ class MacroManager():
         # Load json Config from file, takes config_path if provided
         self.config: Config = Config(config_path=config_path, verbose=verbose)
 
-        self.func_manager: FuncManager = FuncManager(
-            config=self.config, verbose=verbose)
+        self.action_manager: ActionManager = ActionManager(self.config, verbose=verbose)
+
+        # self.func_manager: FuncManager = FuncManager(
+        #     config=self.config, verbose=verbose)
 
         # Set root_win from param
         self.root_win: Tk = root_win
@@ -182,37 +184,44 @@ class MacroManager():
         self.delay = 0.02  # seconds
     # __init__
 
-    def run_action(self, action: Actions, position: int = -1):
+    def run_action(self, position: int = -1, action_name: str = None, value: Any = None):
         """Run an action depending on the action type
         TODO: reimplement this to use ACTIONS instead of BUTTONS
-        TODO: remove Actions enum, not needed here
         Params:
-            action - Actions(Enum), action type to run
             position - int [-1], position where to call the action function from
         """
-        if action == Actions.ALT_TAB:
-            if self.verbose:
-                print("Running alt tab")
-            self.func_manager.run_alt_tab()
-        elif action == Actions.BUTTON_PRESS:
-            # TODO: make sure it's not -1
-            if self.verbose:
-                print(f"Running button press for {position}")
-            self.last_pressed_pos = position
+        if self.verbose:
+            print(f"Running button press for {position}")
+        
+        # Run action_name if defined, don't use the button position at all!
+        if action_name:
+            if value is None:
+                raise Exception(f"Value cannot be None for {action_name}")
+            self.action_manager.actions[action_name](value)
+            return
 
-            # Get function name from position within buttons[] from config
-            func_name, extra = self._get_func_from_pos()
-            # Print error if there is one and return
-            if func_name is None or func_name == "err":
-                print(extra)
-                return
-            # TODO: support mouse recording
-            # Actually run the function, must be defined in FuncManager
-            # TODO: try/catch
-            self._run_func_from_name(func_name, extra)
-        # TODO: add recording action!
-        else:
-            print("Must choose from Actions enum in macromanager.py")
+        self.last_pressed_pos = position
+
+        action_name, action_items = self._get_action_from_pos()
+        # For every action in action_items, run the func
+        for action in action_items:
+            # action: Dict[str, any]
+            func_name = action["func"]
+            func_value = action["value"]
+            self.action_manager.actions[func_name](func_value)
+
+        # # Get function name from position within buttons[] from config
+        # func_name, extra = self._get_func_from_pos()
+        # # Print error if there is one and return
+        # if func_name is None or func_name == "err":
+        #     print(extra)
+        #     return
+        # # TODO: support mouse recording
+        # # Actually run the function, must be defined in FuncManager
+        # # TODO: try/catch
+        # self._run_func_from_name(func_name, extra)
+        # # TODO: add recording action!
+        
     # run_action
 
     def rec_mouse(self, idx: int):
@@ -254,16 +263,10 @@ class MacroManager():
         self.config.save_config()
     # rec_mouse
 
-    def _get_func_from_pos(self) -> Tuple[str, str]:
-        """Get function name from position within buttons[] from config.
-        Errors will result in returning ("err", msg)
-        Returns:
-            Tuple[str, str] - (func_name, extra). Extra is any additional params defined as "extra" in the config.
-        """
-        func_name = None
-        extra = None
-        # Error if the user hit a button that was bigger than buttons[], so we can't call anything
-        if self.last_pressed_pos > len(self.config.buttons):
+    def _get_action_from_pos(self) -> Tuple[str, Any]:
+        """Get return and fix comments"""
+        # Error if the user hit a button that was bigger than actions, so we can't call anything
+        if self.last_pressed_pos > len(self.config.actions.keys()):
             _msg = (
                 "Hit a button that's not defined in the config file!"
                 f"pos: {self.last_pressed_pos} larger than buttons length"
@@ -271,14 +274,42 @@ class MacroManager():
             )
             return ("err", _msg)
 
-        # Get function name + extra if it has it from buttons[]
-        for idx, item in enumerate(self.config.buttons, start=1):
+        _action_matched_key = None
+        _action = None
+
+        for idx, action_key in enumerate(self.config.actions.keys(), start=1):
+            if idx == self.last_pressed_pos:
+                _action_matched_key = action_key
+                _action = self.config.actions[action_key]
+                break
+        return (_action_matched_key, _action)
+    # _get_action_from_pos
+
+    def _get_func_from_pos(self) -> Tuple[str, str]:
+        """Get function name from position within actions from config.
+        Errors will result in returning ("err", msg)
+        Returns:
+            Tuple[str, str] - (func, value) func is actionmanager.actions's key name, value is the args
+        """
+        func_name = None
+        value = None
+        # Error if the user hit a button that was bigger than actions, so we can't call anything
+        if self.last_pressed_pos > len(self.config.actions.keys()):
+            _msg = (
+                "Hit a button that's not defined in the config file!"
+                f"pos: {self.last_pressed_pos} larger than buttons length"
+                "Doing nothing"
+            )
+            return ("err", _msg)
+
+        # Get function name + value from actions
+        for idx, item in enumerate(self.config.actions.values, start=1):
             if idx == self.last_pressed_pos:
                 func_name = item["func"]
                 if "extra" in item:
                     extra = item["extra"]
                 break
-        return (func_name, extra)
+        return (func_name, value)
     # _get_func_from_pos
 
     def _run_func_from_name(self, func_name: str, extra: str):

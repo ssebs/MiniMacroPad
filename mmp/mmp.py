@@ -21,7 +21,7 @@ from util import (
 from config import Config
 from macrodisplay import MacroDisplay
 from guimanager import GUIManager
-from macromanager import MacroManager, Actions
+from macromanager import MacroManager
 
 
 def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
@@ -151,8 +151,7 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
                 # NOTE: button position is NOT 0 indexed!
                 btn_pos = get_btn_pos(data, macro_manager)
                 # Run action
-                macro_manager.run_action(
-                    action=Actions.BUTTON_PRESS, position=btn_pos)
+                macro_manager.run_action(position=btn_pos)
                 # Display press on GUI
                 window.display_press(btn_pos)
         except serial.serialutil.SerialException as e:

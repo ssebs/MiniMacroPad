@@ -7,7 +7,7 @@ from tkinter import Tk
 from ttkbootstrap.constants import *
 from functools import partial
 
-from macromanager import MacroManager, Actions
+from macromanager import MacroManager
 
 
 class MacroDisplay(ttk.Frame):
@@ -30,7 +30,7 @@ class MacroDisplay(ttk.Frame):
         self.verbose: bool = macro_manager.verbose
 
         self.size: dict = macro_manager.config.size
-        self.buttons: list = macro_manager.config.buttons
+        self.actions: list = macro_manager.config.actions
 
         self.truncate_length = 28  # TODO: make a param
         self.grid(column=self.size['x'], row=self.size['y'])
@@ -50,19 +50,20 @@ class MacroDisplay(ttk.Frame):
         grid = {}
         r = 0  # current row
         c = 0  # current column
-        for idx, item in enumerate(self.buttons, start=1):
+        for idx, item in enumerate(self.actions.keys(), start=1):
             if self.verbose:
-                print(f"idx: {idx} {item['text'].strip()} - r: {r}, c: {c}")
+                print(f"idx: {idx} {item.strip()} - r: {r}, c: {c}")
                 print("  ", end='')
                 print(item)
 
-            is_recording_macro: bool = ("rec" in item["func"])
+            # is_recording_macro: bool = ("rec" in item["func"])
+            do_alt_tab = False
 
             grid[idx] = ttk.Button(self.container,
-                                   text=item['text'].strip(),
+                                   text=item.strip(),
                                    bootstyle=(DARK),
                                    command=partial(
-                                       self._handle_gui_press, idx, not is_recording_macro)
+                                       self._handle_gui_press, idx, do_alt_tab)
                                    )
             # TODO: add keyword args to _handle_gui_press
 
@@ -88,9 +89,10 @@ class MacroDisplay(ttk.Frame):
             print(f"Clicked {position}")
         if do_alt_tab:
             # alt + tab back to whatever the user was doing before
-            self.macro_manager.run_action(Actions.ALT_TAB)
+            self.macro_manager.run_action(action_name="KB_SEND_STR", value="test")
+        
         # Run the actual action
-        self.macro_manager.run_action(Actions.BUTTON_PRESS, position=position)
+        self.macro_manager.run_action(position=position)
     # _handle_gui_press
 
     def display_press(self, position: int, verbose: bool = False):
