@@ -11,11 +11,7 @@ from typing import Tuple, Dict
 
 from config import Config
 from stringlooper import StringLooper
-
-
-class Actions(Enum):
-    ALT_TAB = 0
-    BUTTON_PRESS = 1
+from actionmanager import Actions
 
 
 class FuncManager():
@@ -189,6 +185,7 @@ class MacroManager():
     def run_action(self, action: Actions, position: int = -1):
         """Run an action depending on the action type
         TODO: reimplement this to use ACTIONS instead of BUTTONS
+        TODO: remove Actions enum, not needed here
         Params:
             action - Actions(Enum), action type to run
             position - int [-1], position where to call the action function from

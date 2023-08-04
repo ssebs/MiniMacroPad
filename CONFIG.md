@@ -9,12 +9,6 @@ A config file that controls the macro pad will be created for you. This will be 
 
 - A `DATA` object where you can add lists of strings that you may want to use for looping thru.
   - Like: `"DATA": { "ARR_NAME": ["value1", "value2"] }`
-- Note about `send_hotkey`
-  - Types whatever you put in the array, supports multiple hotkeys
-  - e.g.  `[ [ "win", "r" ], [ "TXT=shell:startup", "enter" ] ]`
-  - What you enter here needs to work with `keyboard.press`
-    - If adding a string value in the hotkey, add `TXT=` before.
-      - e.g. `"TXT=shell:startup"`
 
 - `ACTIONS` object:
   - What to support:
