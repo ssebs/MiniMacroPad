@@ -10,7 +10,7 @@ See [my thangs.com model](https://thangs.com/designer/sebsafari/3d-model/Mini%20
 See `MiniMacroPad.ino` for more details, but basically you click a button and it sends a serial number of what button you pressed. For this example the macropad is a 2x2 layout.
 
 ## Driver (GUI)
-A python TK GUI provides functionality to the mini macro pad. All driver related code is under the `driver/` folder.
+A python TK GUI provides functionality to the mini macro pad. All driver related code is under the `mmp/` folder.
 
 ![screenshot](./img/mmpscreenshot.png)
 > This screenshot may be out of date.
@@ -23,17 +23,17 @@ A python TK GUI provides functionality to the mini macro pad. All driver related
   - https://github.com/ssebs/MiniMacroPad (https)
   - git@github.com:ssebs/MiniMacroPad.git (ssh)
 - `PS> cd mmp/`
-- `PS driver> python3 -m venv venv`
-- `PS driver> .\venv\Scripts\Activate.ps1`
-  - `(venv) PS driver> pip install -r requirements.txt`
+- `PS mmp> python3 -m venv venv`
+- `PS mmp> .\venv\Scripts\Activate.ps1`
+  - `(venv) PS mmp> pip install -r requirements.txt`
 
 ### Running in dev
 - Once in a virtual environment (venv)
-  - `(venv) PS driver> python __init__.py`
+  - `(venv) PS mmp> python __init__.py`
 
 ### Building the .exe
 - Update the mmp.spec file to match your folder!
-- `(venv) PS driver> pyinstaller mmp.spec`
+- `(venv) PS mmp> pyinstaller mmp.spec`
     - Built file is under `./dist/`
     - Run this .exe
 

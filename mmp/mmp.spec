@@ -6,7 +6,7 @@ block_cipher = None
 
 a = Analysis(
     ['__init__.py'],
-    pathex=["F:\LocalProgramming\MiniMacroPad\mmp", "mmp", "."],
+    pathex=["."],
     binaries=[('.\\res\\*', '.')],
     datas=[('.\\res\\*', '.')],
     hiddenimports=[],
