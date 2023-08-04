@@ -27,7 +27,7 @@ class FuncManager():
         self.verbose: bool = verbose
         self.config: Config = config
         self.default_delay: float = default_delay
-        self.loopers: dict = self._parse_loopers()
+        self.loopers: Dict[StringLooper] = self._parse_loopers()
     # __init__
 
     def _parse_loopers(self) -> dict:

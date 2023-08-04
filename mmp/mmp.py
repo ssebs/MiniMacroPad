@@ -147,14 +147,10 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
                 print(data[4:])
             if ":" not in data:
                 # Get button position from data
-                # NOTE: button position is NOT 0 indexed!
-                btn_pos = int(data)
-                if btn_pos > len(macro_manager.config.buttons):
-                    # 11 => 1
-                    if len(str(btn_pos)) > 1:
-                        btn_pos = int(str(btn_pos)[-1])
 
-                # Do something based on button that was pressed
+                # NOTE: button position is NOT 0 indexed!
+                btn_pos = get_btn_pos(data, macro_manager)
+                # Run action
                 macro_manager.run_action(
                     action=Actions.BUTTON_PRESS, position=btn_pos)
                 # Display press on GUI
@@ -166,6 +162,24 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
             return
     # end loop
 # arduino_listen_loop
+
+
+def get_btn_pos(data: str, macro_manager: MacroManager) -> int:
+    """Parse button position from serial data that's a number
+    (checks for macro_manager.config.actions.keys())
+    Params:
+        data - str, serial's readline that's been stripped
+    Returns:
+        int - btn_pos, 1 indexed
+    """
+    # NOTE: button position is NOT 0 indexed!
+    btn_pos = int(data)
+    if btn_pos > len(macro_manager.config.actions.keys()):
+        # 11 => 1
+        if len(str(btn_pos)) > 1:
+            btn_pos = int(str(btn_pos)[-1])
+    return btn_pos
+# get_btn_pos
 
 
 def handle_close(macro_manager: MacroManager):

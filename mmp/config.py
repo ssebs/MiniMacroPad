@@ -37,7 +37,7 @@ class Config():
 
         # Shortcuts for accessing
         self.config = self.full_config["CONFIG"]
-        self.buttons = self.full_config["BUTTONS"]
+        self.actions = self.full_config["ACTIONS"]
         self.data = self.full_config["DATA"]
         self.serial = self.config["SERIAL"]
         self.size = self.config["SIZE"]
