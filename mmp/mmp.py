@@ -20,47 +20,48 @@ from util import (
 )
 from config import Config
 from macrodisplay import MacroDisplay
+from guimanager import GUIManager
 from macromanager import MacroManager, Actions
 
 
 def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
-    """Start initializing the MiniMacroPad
+    """Start initializing the MiniMacroPad & set things up.
     Params:
         is_gui_only - bool, Run in GUI only mode. (Disable serial comms)
         monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config
         is_verbose - bool, Enable verbosity
-    TODO: Cleanup
     """
     if is_verbose:
         print("Driver for macro pad:")
 
     # # Globals # #
-    # Setup Serial comm thread
+    # TODO: Stop using globals
+    # Setup Serial communication thread
     global thread1
-    # For the close icon in the GUI, stop the thread too
+    # Used when clicking the close icon in the GUI, stop the thread too
     global do_close
     do_close = False
 
-    # Setup TK window
+    # Create root TK window
     _root: Tk = ttk.Window(themename="darkly")
 
-    # Setup main macro manager
+    # Setup manager that handles actual functionality
     macro_manager: MacroManager = MacroManager(
         root_win=_root, verbose=is_verbose)
 
-    # Load arduino
+    # Load arduino's Serial port if possible
     arduino: Serial = None
     if not is_gui_only:
         if is_verbose:
             print("Loading Serial connection")
         arduino: Serial = init_arduino(macro_manager.config)
 
-    # Setup main Window
-    macro_window = init_gui(macro_manager=macro_manager, monitor_num=monitor_num)
+    # Setup GUI
+    guimanager = GUIManager(macro_manager=macro_manager, cli_arg_monitor_num=monitor_num)
 
     # Handle reading serial data via arduino_listen_loop
     thread1 = threading.Thread(target=arduino_listen_loop, args=(
-        arduino, macro_manager, macro_window), daemon=True)
+        arduino, macro_manager, guimanager.macro_display), daemon=True)
     # TODO: add keyword args to above
     thread1.start()
 
@@ -72,6 +73,8 @@ def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
 def init_arduino(config: Config) -> Serial:
     """
     Initialize serial COM port and return it. Uses SERIAL_QRY to find the port. Show MsgBox if there's an exception.
+    Params:
+        config - Config object that has relevant info for the RETRY_COUNT, BAUDRATE, etc.
     Returns:
         Serial object of arduino / teensy
     """
@@ -119,62 +122,6 @@ def init_arduino(config: Config) -> Serial:
         break
     return arduino
 # end init_arduino
-
-
-def init_gui(macro_manager: MacroManager, monitor_num: Optional[int]) -> MacroDisplay:
-    """
-    Initialize the gui, uses global root var.
-    Params:
-        macro_manager - MacroManager, instance of the MacroManager class that's used elsewhere in the program
-        monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config
-    Returns:
-        MacroDisplay object for GUI
-    """
-
-    # Save monitor_num in the config file if they've defined it.
-    if monitor_num:
-        macro_manager.config.config["MONITOR"] = int(monitor_num)
-        macro_manager.config.save_config()
-
-    # Create main window
-    macro_display = MacroDisplay(
-        container=macro_manager.root_win, macro_manager=macro_manager)
-
-    # Set flags for handling closing the window
-    signal.signal(signal.SIGINT, signal.default_int_handler)
-    macro_manager.root_win.protocol(
-        "WM_DELETE_WINDOW", partial(handle_close, macro_manager))
-
-    # Set icon / title
-    macro_manager.root_win.iconbitmap(resource_path(ICON_PATH))
-    # macro_manager.root_win.resizable(False, False)
-    macro_manager.root_win.title("MiniMacroPad")
-
-    # TODO: Make this easier to read!
-    posX = None
-    posY = None
-    # Set window location + size
-    if macro_manager.config.config["MONITOR"] == -1:
-        # dev mode
-        posX = macro_manager.root_win.winfo_screenwidth() + 200
-        posY = int(macro_manager.root_win.winfo_screenheight() / 2) - 200
-    elif macro_manager.config.config["MONITOR"] != 1:
-        # 2nd monitor
-        posX = macro_manager.root_win.winfo_screenwidth(
-        ) + int(macro_manager.root_win.winfo_screenwidth() / 2)
-        posY = macro_manager.root_win.winfo_screenheight(
-        ) - int(macro_manager.root_win.winfo_screenheight() / 2)
-    else:
-        # 1st monitor
-        posX = int(macro_manager.root_win.winfo_screenwidth() / 2)
-        posY = int(macro_manager.root_win.winfo_screenheight() / 2)
-
-    # Set position & size
-    macro_manager.root_win.geometry(
-        f"{macro_manager.config.config['GUI_SIZE']}+{posX}+{posY}")
-
-    return macro_display
-# end init_gui
 
 
 def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk):

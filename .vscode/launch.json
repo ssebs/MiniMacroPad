@@ -8,7 +8,7 @@
             "name": "Python: MMP",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/driver/__init__.py",
+            "program": "${workspaceFolder}/mmp/__init__.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "python": "${command:python.interpreterPath}",

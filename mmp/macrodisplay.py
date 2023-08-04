@@ -22,11 +22,11 @@ class MacroDisplay(ttk.Frame):
         tbd
     """
 
-    def __init__(self, container: Tk, macro_manager: MacroManager, verbose: bool = False, **options):
-        super().__init__(container, **options)
+    def __init__(self, macro_manager: MacroManager, verbose: bool = False, **options):
+        super().__init__(macro_manager.root_win, **options)
         ttk.Style().configure("TButton", font="Ubuntu-Mono 14")
-        self.container: Tk = container
         self.macro_manager: MacroManager = macro_manager
+        self.container: Tk = macro_manager.root_win
         self.verbose: bool = macro_manager.verbose
 
         self.size: dict = macro_manager.config.size
