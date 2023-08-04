@@ -4,10 +4,25 @@ List of work to be done for this project.
 
 ## MUST HAVE
 - [ ] Support delays!
+- [ ] Config file button/action rework
+  - [x] delay
+  - [x] keyboard hotkey (alt+tab)
+  - [x] keyboard send string ("test\n")
+  - [ ] keyboard send looper string ('ggez')
+  - [x] keyboard send key ("enter")?
+  - [x] keyboard hold down
+  - [x] keyboard release
+  - [ ] mouse click 
+  - [ ] mouse hold down
+  - [ ] mouse release
+  - [ ] mouse move to pos
+- [ ] Support recording
+  - [ ] mouse record clicks & positions
+  - [ ] keyboard record presses
+  - [ ] GUI for recording
 - [ ] Mouse macros
-  - [WIP] Record mouse macro
   - [ ] Playback mouse macro
-  - [ ] Allow keyboard + mouse at the same time
+  - [x] Allow keyboard + mouse at the same time (config file)
 - [ ] Editor GUI for config file?
   - [ ] Support ez features from json
   - [ ] Support all features from json
@@ -19,6 +34,7 @@ List of work to be done for this project.
 ## Tech Debt
 - [ ] Stop using global vars
 - [ ] Continue refactor to simplify the code
+- [ ] Fix `python -m mmp` not working
 - [ ] Change how the pre/func/post works
   - [ ] pre/post only allow for holding keys
   - [ ] not easy to support mouse

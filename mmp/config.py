@@ -37,7 +37,7 @@ class Config():
 
         # Shortcuts for accessing
         self.config = self.full_config["CONFIG"]
-        self.buttons = self.full_config["BUTTONS"]
+        self.actions = self.full_config["ACTIONS"]
         self.data = self.full_config["DATA"]
         self.serial = self.config["SERIAL"]
         self.size = self.config["SIZE"]
@@ -94,7 +94,7 @@ class Config():
     # save_default_config
 
     def save_config(self, new_config: dict = None) -> None:
-        """Save self.full_configto self.path.
+        """Save self.full_config to self.path.
         Params:
             new_config - dict, if present, save that config object to the default config path.
         """

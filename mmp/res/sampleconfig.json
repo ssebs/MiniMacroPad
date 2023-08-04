@@ -20,6 +20,92 @@
             "orange"
         ]
     },
+    "ACTIONS": {
+        "ggwp": [
+            {
+                "func": "KB_SEND_HOTKEY",
+                "value": [
+                    "shift",
+                    "enter"
+                ]
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_SEND_STR",
+                "value": "ggwp"
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ],
+        "VAL loop": [
+            {
+                "func": "KB_SEND_HOTKEY",
+                "value": [
+                    "shift",
+                    "enter"
+                ]
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_SEND_LOOP",
+                "value": "FRUIT"
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ],
+        "Undo": [
+            {
+                "func": "KB_SEND_HOTKEY",
+                "value": [
+                    "ctrl",
+                    "z"
+                ]
+            }
+        ],
+        "Open Startup Folder": [
+            {
+                "func": "KB_SEND_HOTKEY",
+                "value": [
+                    "windows",
+                    "r"
+                ]
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_SEND_STR",
+                "value": "shell:startup"
+            },
+            {
+                "func": "DELAY",
+                "value": 0.2
+            },
+            {
+                "func": "KB_KEY_PRESS",
+                "value": "enter"
+            }
+        ]
+    },
     "BUTTONS": [
         {
             "text": "Test\n",

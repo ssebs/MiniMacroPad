@@ -7,58 +7,61 @@ import threading
 from serial import Serial
 import serial
 
+from functools import partial
 import ttkbootstrap as ttk
 from tkinter import Tk, messagebox
 from ttkbootstrap.constants import *
-from functools import partial
+from typing import Optional
 
-from util import (
+from mmp.util import (
     CustomSerialException,
     SerialNotFoundException, SerialMountException,
     resource_path, get_serial_port_name, ICON_PATH, SFX_PATH, MSGBOX_TITLE
 )
-from config import Config
-from macrodisplay import MacroDisplay
-from macromanager import MacroManager, Actions
+from mmp.config import Config
+from mmp.macrodisplay import MacroDisplay
+from mmp.guimanager import GUIManager
+from mmp.macromanager import MacroManager
 
 
-def main(is_gui_only: bool, is_verbose: bool):
-    """Start initializing the MiniMacroPad
+def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
+    """Start initializing the MiniMacroPad & set things up.
     Params:
         is_gui_only - bool, Run in GUI only mode. (Disable serial comms)
+        monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config
         is_verbose - bool, Enable verbosity
-    TODO: Cleanup
     """
     if is_verbose:
         print("Driver for macro pad:")
 
     # # Globals # #
-    # Setup Serial comm thread
+    # TODO: Stop using globals
+    # Setup Serial communication thread
     global thread1
-    # For the close icon in the GUI, stop the thread too
+    # Used when clicking the close icon in the GUI, stop the thread too
     global do_close
     do_close = False
 
-    # Setup TK window
+    # Create root TK window
     _root: Tk = ttk.Window(themename="darkly")
 
-    # Setup main macro manager
+    # Setup manager that handles actual functionality
     macro_manager: MacroManager = MacroManager(
         root_win=_root, verbose=is_verbose)
 
-    # Load arduino
+    # Load arduino's Serial port if possible
     arduino: Serial = None
     if not is_gui_only:
         if is_verbose:
             print("Loading Serial connection")
         arduino: Serial = init_arduino(macro_manager.config)
 
-    # Setup main Window
-    macro_window = init_gui(macro_manager)
+    # Setup GUI
+    guimanager = GUIManager(macro_manager=macro_manager, cli_arg_monitor_num=monitor_num)
 
     # Handle reading serial data via arduino_listen_loop
     thread1 = threading.Thread(target=arduino_listen_loop, args=(
-        arduino, macro_manager, macro_window), daemon=True)
+        arduino, macro_manager, guimanager.macro_display), daemon=True)
     # TODO: add keyword args to above
     thread1.start()
 
@@ -70,6 +73,8 @@ def main(is_gui_only: bool, is_verbose: bool):
 def init_arduino(config: Config) -> Serial:
     """
     Initialize serial COM port and return it. Uses SERIAL_QRY to find the port. Show MsgBox if there's an exception.
+    Params:
+        config - Config object that has relevant info for the RETRY_COUNT, BAUDRATE, etc.
     Returns:
         Serial object of arduino / teensy
     """
@@ -119,57 +124,13 @@ def init_arduino(config: Config) -> Serial:
 # end init_arduino
 
 
-def init_gui(macro_manager: MacroManager) -> MacroDisplay:
-    """
-    Initialize the gui, uses global root var.
-    Returns:
-        MacroDisplay object for GUI
-    """
-
-    # Create main window
-    macro_display = MacroDisplay(
-        container=macro_manager.root_win, macro_manager=macro_manager)
-
-    # Set flags for handling closing the window
-    signal.signal(signal.SIGINT, signal.default_int_handler)
-    macro_manager.root_win.protocol(
-        "WM_DELETE_WINDOW", partial(handle_close, macro_manager))
-
-    # Set icon / title
-    macro_manager.root_win.iconbitmap(resource_path(ICON_PATH))
-    # macro_manager.root_win.resizable(False, False)
-    macro_manager.root_win.title("MiniMacroPad")
-
-    # TODO: Make this easier to read!
-    posX = None
-    posY = None
-    # Set window location + size
-    if macro_manager.config.config["MONITOR"] == -1:
-        # dev mode
-        posX = macro_manager.root_win.winfo_screenwidth() + 200
-        posY = int(macro_manager.root_win.winfo_screenheight() / 2) - 200
-    elif macro_manager.config.config["MONITOR"] != 1:
-        # 2nd monitor
-        posX = macro_manager.root_win.winfo_screenwidth(
-        ) + int(macro_manager.root_win.winfo_screenwidth() / 2)
-        posY = macro_manager.root_win.winfo_screenheight(
-        ) - int(macro_manager.root_win.winfo_screenheight() / 2)
-    else:
-        # 1st monitor
-        posX = int(macro_manager.root_win.winfo_screenwidth() / 2)
-        posY = int(macro_manager.root_win.winfo_screenheight() / 2)
-
-    # Set position & size
-    macro_manager.root_win.geometry(
-        f"{macro_manager.config.config['GUI_SIZE']}+{posX}+{posY}")
-
-    return macro_display
-# end init_gui
-
-
 def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk):
     """
     Handles serial comms & run actions if the arduino sends the right signal
+    Params:
+        arduino - Serial, the arduino's serial connection. If None then return (leave), else listen for button presses
+        macro_manager - MacroManager, instance of the MacroManager class that's used elsewhere in the program
+        window - Tk, used to display a button press based on btn_pos
     """
     # GUI only mode
     if arduino is None:
@@ -186,16 +147,11 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
                 print(data[4:])
             if ":" not in data:
                 # Get button position from data
-                # NOTE: button position is NOT 0 indexed!
-                btn_pos = int(data)
-                if btn_pos > len(macro_manager.config.buttons):
-                    # 11 => 1
-                    if len(str(btn_pos)) > 1:
-                        btn_pos = int(str(btn_pos)[-1])
 
-                # Do something based on button that was pressed
-                macro_manager.run_action(
-                    action=Actions.BUTTON_PRESS, position=btn_pos)
+                # NOTE: button position is NOT 0 indexed!
+                btn_pos = get_btn_pos(data, macro_manager)
+                # Run action
+                macro_manager.run_action(position=btn_pos)
                 # Display press on GUI
                 window.display_press(btn_pos)
         except serial.serialutil.SerialException as e:
@@ -203,9 +159,26 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
             print(e)
             handle_close(macro_manager)
             return
-
     # end loop
 # arduino_listen_loop
+
+
+def get_btn_pos(data: str, macro_manager: MacroManager) -> int:
+    """Parse button position from serial data that's a number
+    (checks for macro_manager.config.actions.keys())
+    Params:
+        data - str, serial's readline that's been stripped
+    Returns:
+        int - btn_pos, 1 indexed
+    """
+    # NOTE: button position is NOT 0 indexed!
+    btn_pos = int(data)
+    if btn_pos > len(macro_manager.config.actions.keys()):
+        # 11 => 1
+        if len(str(btn_pos)) > 1:
+            btn_pos = int(str(btn_pos)[-1])
+    return btn_pos
+# get_btn_pos
 
 
 def handle_close(macro_manager: MacroManager):
