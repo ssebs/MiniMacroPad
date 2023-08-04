@@ -16,6 +16,7 @@ class GUIManager():
 
     def __init__(self, macro_manager: MacroManager, cli_arg_monitor_num: Optional[int]):
         """Create GUIManager
+        (Instantiates a MacroDisplay object)
         Params:
             macro_manager - MacroManager, instance of the MacroManager class that's used elsewhere in the program
             cli_arg_monitor_num - Optional[int], Which monitor to show the GUI on. If None, use what's in the config file

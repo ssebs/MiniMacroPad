@@ -127,6 +127,10 @@ def init_arduino(config: Config) -> Serial:
 def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk):
     """
     Handles serial comms & run actions if the arduino sends the right signal
+    Params:
+        arduino - Serial, the arduino's serial connection. If None then return (leave), else listen for button presses
+        macro_manager - MacroManager, instance of the MacroManager class that's used elsewhere in the program
+        window - Tk, used to display a button press based on btn_pos
     """
     # GUI only mode
     if arduino is None:
@@ -160,7 +164,6 @@ def arduino_listen_loop(arduino: Serial, macro_manager: MacroManager, window: Tk
             print(e)
             handle_close(macro_manager)
             return
-
     # end loop
 # arduino_listen_loop
 

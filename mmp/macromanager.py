@@ -19,7 +19,7 @@ class Actions(Enum):
 
 
 class FuncManager():
-    """Actually run the functions for the Macro
+    """The actual functionality for the Macros
     TODO: Move to own file
     """
 
@@ -31,9 +31,14 @@ class FuncManager():
     # __init__
 
     def _parse_loopers(self) -> dict:
-        """parse json to create string loopers"""
+        """parse config json to create string loopers
+        (Instantiates StringLooper objects)
+        Returns:
+            dict[str, StringLooper]
+        """
         # TODO: fix the exception handling! make it return an error instead of raising here
         _looper = {}
+        # TODO: reimplement
         for btn in self.config.buttons:
             if "extra" not in btn:
                 continue
@@ -156,7 +161,7 @@ class FuncManager():
 class MacroManager():
     """
     Manager for the Macros for use with the MiniMacroPad
-    (Instantiates a Config object)
+    (Instantiates Config, FuncManager objects)
     Params:
         root_win - Tk, root container
         config_path - str [None], path to config, if None use default
@@ -179,11 +184,11 @@ class MacroManager():
         # TODO: replace this comment
         self.last_pressed_pos = -1
         self.delay = 0.02  # seconds
-
     # __init__
 
     def run_action(self, action: Actions, position: int = -1):
         """Run an action depending on the action type
+        TODO: reimplement this to use ACTIONS instead of BUTTONS
         Params:
             action - Actions(Enum), action type to run
             position - int [-1], position where to call the action function from
