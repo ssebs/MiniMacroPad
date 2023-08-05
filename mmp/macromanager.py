@@ -162,9 +162,9 @@ class MacroManager():
         self.last_pressed_pos = position
         action_name, action_items = self._get_action_from_pos()
         if action_name == "err":
-            raise Exception(action_items)
+            print(action_items)
         elif action_items is None:
-            raise Exception(f"Could not get action at pos: {position}. Make sure it's in ACTIONS in the config. Or is it 0? It should start at 1")
+            print(f"Could not get action at pos: {position}. Make sure it's in ACTIONS in the config. Or is it 0? It should start at 1")
 
         # For every action in action_items, run the func
         for action in action_items:
