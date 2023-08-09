@@ -54,7 +54,7 @@ class ActionManager():
             if "delay" in kwargs:
                 _arg_delay = kwargs["delay"]
             _delay = _arg_delay if _arg_delay else self.default_delay
-            func(*args, delay=_delay)
+            func(*args)  # TODO: FIX pass delay to the func
         return outware
 
     def _parse_loopers(self) -> dict:
@@ -133,7 +133,8 @@ class ActionManager():
             keyboard.press(key)
 
         # Wait
-        time.sleep(delay)
+        if delay:
+            time.sleep(delay)
 
         # Release all keys
         for key in hotkey:

@@ -163,8 +163,10 @@ class MacroManager():
         action_name, action_items = self._get_action_from_pos()
         if action_name == "err":
             print(action_items)
+            return
         elif action_items is None:
             print(f"Could not get action at pos: {position}. Make sure it's in ACTIONS in the config. Or is it 0? It should start at 1")
+            return
 
         # For every action in action_items, run the func
         for action in action_items:
@@ -222,7 +224,7 @@ class MacroManager():
     def _get_action_from_pos(self) -> Tuple[str, Any]:
         """Get return and fix comments"""
         # Error if the user hit a button that was bigger than actions, so we can't call anything
-        if self.last_pressed_pos > len(self.config.actions.keys()):
+        if self.last_pressed_pos > len(self.config.actions.keys()) or self.last_pressed_pos == 0:
             _msg = (
                 "Hit a button that's not defined in the config file!"
                 f"pos: {self.last_pressed_pos} larger than buttons length"
