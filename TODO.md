@@ -53,6 +53,7 @@ List of work to be done for this project.
 - [ ] Support multiple pages of stuff
 
 ## Completed work (moved from todo or TD)
+- [x] Fix Exception: Failed to find ./res/sampleconfig.json error
 - [x] Fix shift + enter
 - [x] Add pre and post wrapper functions to all
 - [x] config file for macropad settings

@@ -8,13 +8,13 @@
             "name": "Python: MMP",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/mmp",
-            "program": "__init__.py",
+            "cwd": "${workspaceFolder}",
+            "module": "mmp",
             "console": "integratedTerminal",
             "justMyCode": true,
             "python": "${command:python.interpreterPath}",
             "args": [
-                "-v"
+                "-v",
             ]
         }
     ]

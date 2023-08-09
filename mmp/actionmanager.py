@@ -44,15 +44,18 @@ class ActionManager():
         }
     # __init__
 
-    # TODO: Implement this!
     # TODO: Create another wrapper for logging actions
-    # def set_delay(func):
-    #     """wrapper function that sets the default delay if none has been set"""
-    #     def outware(*args):
-    #         self = args[0]
-    #         _delay = delay if delay else self.default_delay
-    #         func(*args)
-    #     return outware
+    def set_delay(func):
+        """wrapper function that sets the default delay if none has been set"""
+        def outware(*args, **kwargs):
+            self = args[0]
+            _arg_delay = None
+            # Set the default delay if the func param doesn't use it
+            if "delay" in kwargs:
+                _arg_delay = kwargs["delay"]
+            _delay = _arg_delay if _arg_delay else self.default_delay
+            func(*args, delay=_delay)
+        return outware
 
     def _parse_loopers(self) -> dict:
         """parse config json to create string loopers
@@ -95,19 +98,16 @@ class ActionManager():
             keys - List[str], list of keys to hold simultaneously
             delay - float, how long in seconds to hold the keys down. Default to self.default_delay
         """
-        # TODO: Make this a wrapper func
-        _delay = delay if delay else self.default_delay
-
         # Press all keys down
         for key in keys:
             # If we are sending a string, use write instead
             if key.startswith("TXT="):
                 keyboard.write(key[4:])
-                time.sleep(_delay)
+                time.sleep(delay)
             else:
                 keyboard.press(key)
         # Wait
-        time.sleep(_delay)
+        time.sleep(delay)
         # Release all keys
         for key in keys:
             # Ignore if sending a string
@@ -115,39 +115,37 @@ class ActionManager():
                 keyboard.release(key)
     # _press_and_hold
 
+    @set_delay
     def do_delay(self, delay: float = None):
         """Run time.sleep for delay, or default delay"""
-        _delay = delay if delay else self.default_delay
-        time.sleep(_delay)
+        time.sleep(delay)
     # do_delay
 
+    @set_delay
     def do_kb_send_hotkey(self, hotkey: List[str], delay: float = None):
         """Takes a list of keys and holds at the same time
         Params:
             keys - List[str], list of keys to hold simultaneously
             delay - float, how long in seconds to hold the keys down. Default to self.default_delay
         """
-        # TODO: Make this a wrapper func
-        _delay = delay if delay else self.default_delay
-
         # Press all keys down
         for key in hotkey:
             keyboard.press(key)
 
         # Wait
-        time.sleep(_delay)
+        time.sleep(delay)
 
         # Release all keys
         for key in hotkey:
             keyboard.release(key)
     # do_kb_send_hotkey
 
+    @set_delay
     def do_kb_send_str(self, string_to_send: str, delay: float = None):
         """Write string_to_send using the keyboard
         Params:
             string_to_send - str, The string to write with the keyboard
         """
-        _delay = delay if delay else self.default_delay
         keyboard.write(string_to_send, delay)
     # do_kb_send_str
 
