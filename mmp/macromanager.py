@@ -61,38 +61,6 @@ class FuncManager():
         return _looper
     # _parse_loopers
 
-    def run_alt_tab(self, delay: float = None):
-        _delay = delay if delay else self.default_delay
-        self._press_and_hold(["alt", "tab"])
-        time.sleep(_delay)
-
-    def _press_and_hold(self, keys: list, delay: float = None):
-        """Takes a list of keys to hold at the same time
-        Params:
-            keys - list, list of keys to hold simultaneously
-            delay - float, how long in seconds to hold the keys down. Default to self.default_delay
-        """
-        # Set to default if undefined
-        # TODO: confirm this is the same as the other one that's similar...
-        _delay = delay if delay else self.default_delay
-
-        # Press all keys down
-        for key in keys:
-            # If we are sending a string, use write instead
-            if key.startswith("TXT="):
-                keyboard.write(key[4:])
-                time.sleep(_delay)
-            else:
-                keyboard.press(key)
-        # Wait
-        time.sleep(_delay)
-        # Release all keys
-        for key in keys:
-            # Ignore releasing strings
-            if not key.startswith("TXT="):
-                keyboard.release(key)
-    # _press_and_hold
-
     def loop_up(self, idx: int, extra: str):
         self.loopers[extra].loop_up()
         if self.verbose:

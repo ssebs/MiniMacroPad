@@ -52,7 +52,7 @@
                 "DELAY": 0.2
             },
             {
-                "KB_SEND_LOOP": "FRUITS"
+                "KB_SEND_LOOP_UP": "FRUITS"
             },
             {
                 "DELAY": 0.2

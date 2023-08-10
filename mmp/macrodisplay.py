@@ -57,7 +57,7 @@ class MacroDisplay(ttk.Frame):
                 print(item)
 
             # is_recording_macro: bool = ("rec" in item["func"])
-            do_alt_tab = False  # TODO: replace with is gui flag
+            do_alt_tab = True  # TODO: replace with is gui flag?
 
             grid[idx] = ttk.Button(self.container,
                                    text=item.strip(),

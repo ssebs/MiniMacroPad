@@ -122,7 +122,11 @@ I'd like to create a GUI to edit the macros, but we're not there yet. So for now
     - `value` (keyboard press a hotkey. (["alt", "tab"])) type: List[str]
   - `KB_SEND_STR`
     - `value` (keyboard send a word/sentence/string. (ggwp)) type: str
-  - `KB_SEND_LOOP`
+  - `KB_SEND_LOOP_UP`
+    - `value` TODO: Explain this
+  - `KB_SEND_LOOP_DOWN`
+    - `value` TODO: Explain this
+  - `KB_SEND_LOOP_RAND`
     - `value` TODO: Explain this
   - `KB_KEY_PRESS`
     - `value` (keyboard press and release a key ("enter")) type: str

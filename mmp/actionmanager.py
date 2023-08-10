@@ -17,6 +17,11 @@ class ActionManager():
     """
     Manager for the actions to run. (keyboard & mouse operations)
     """
+    LOOPER_ACTIONS: List[str] = [
+        "KB_SEND_LOOP_UP",
+        "KB_SEND_LOOP_DOWN",
+        "KB_SEND_LOOP_RAND"
+    ]
 
     def __init__(self, config: Config, default_delay: float = 0.2, verbose: bool = False):
         """
@@ -25,14 +30,14 @@ class ActionManager():
         self.verbose: bool = verbose
         self.config: Config = config
         self.default_delay: float = default_delay
-        # self.loopers: Dict[StringLooper] = self._parse_loopers()
+        self.loopers: Dict[StringLooper] = self._parse_loopers()
 
         # ACTION_NAME:function mapping
         self.actions = {
             "DELAY": self.do_delay,
             "KB_SEND_HOTKEY": self.do_kb_send_hotkey,
             "KB_SEND_STR": self.do_kb_send_str,
-            # "KB_SEND_LOOP": replace,
+            "KB_SEND_LOOP_UP": self.do_kb_loop_up,
             "KB_KEY_PRESS": self.do_kb_key_press,
             "KB_KEY_DOWN": self.do_kb_key_down,
             "KB_KEY_UP": self.do_kb_key_up,
@@ -65,23 +70,21 @@ class ActionManager():
         """
         # TODO: fix the exception handling! make it return an error instead of raising here
         _looper = {}
-        # TODO: reimplement
-        for btn in self.config.buttons:
-            if "extra" not in btn:
-                continue
-            try:
-                # If the array name is not in data
-                if btn["extra"] not in self.config.data:
-                    raise Exception(
-                        f"Failed to find {btn['extra']} in {self.config.data}")
-                # Get array name from extra variable
-                tmp_loop = StringLooper(self.config.data[btn['extra']])
-                # Add to dict
-                _looper[btn['extra']] = tmp_loop
+        # TODO: redocument / cleanup
 
-            except Exception as e:
-                print("Failed to add looper")
-                raise e
+        # Go thru all actions, find the ones with loopers, and instantiate StringLoopers from that
+        for _action_name, _action_item in self.config.actions.items():
+            # For the actual action within the _action_item list
+            for _action in _action_item:
+                func_name, func_value = next(iter(_action.items()))
+                if func_name in ActionManager.LOOPER_ACTIONS:
+                    # Found a looper!
+
+                    # Check func_value, make sure that exists within config.DATA
+                    if func_value not in self.config.data.keys():
+                        raise Exception(f"Failed to find {func_value} in {self.config.data}")
+
+                    _looper[func_value] = StringLooper(self.config.data[func_value])
 
         if self.verbose:
             print("loopers:")
@@ -91,6 +94,15 @@ class ActionManager():
         # Return new dict
         return _looper
     # _parse_loopers
+
+    def do_kb_loop_up(self, data_name: List[str]):
+        """TODO: document"""
+        self.loopers[data_name].loop_up()
+        if self.verbose:
+            print(
+                f"loop_up: {self.loopers[data_name].get_str()}, list: {data_name}")
+        keyboard.write(self.loopers[data_name].get_str())
+    # do_kb_loop_up
 
     def _press_and_hold(self, keys: List[str], delay: float = None):
         """Takes a list of keys to hold at the same time
