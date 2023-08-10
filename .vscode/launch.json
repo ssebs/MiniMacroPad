@@ -15,7 +15,6 @@
             "python": "${command:python.interpreterPath}",
             "args": [
                 "-v",
-                "-g"
             ]
         }
     ]
