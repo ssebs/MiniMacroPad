@@ -23,58 +23,47 @@
     "ACTIONS": {
         "ggwp": [
             {
-                "func": "KB_SEND_HOTKEY",
-                "value": [
+                "KB_SEND_HOTKEY": [
                     "shift",
                     "enter"
                 ]
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_SEND_STR",
-                "value": "ggwp"
+                "KB_SEND_STR": "ggwp"
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_KEY_PRESS",
-                "value": "enter"
+                "KB_KEY_PRESS": "enter"
             }
         ],
-        "VAL loop": [
+        "Fruit loop": [
             {
-                "func": "KB_SEND_HOTKEY",
-                "value": [
+                "KB_SEND_HOTKEY": [
                     "shift",
                     "enter"
                 ]
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_SEND_LOOP",
-                "value": "FRUIT"
+                "KB_SEND_LOOP": "FRUITS"
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_KEY_PRESS",
-                "value": "enter"
+                "KB_KEY_PRESS": "enter"
             }
         ],
         "Undo": [
             {
-                "func": "KB_SEND_HOTKEY",
-                "value": [
+                "KB_SEND_HOTKEY": [
                     "ctrl",
                     "z"
                 ]
@@ -82,65 +71,23 @@
         ],
         "Open Startup Folder": [
             {
-                "func": "KB_SEND_HOTKEY",
-                "value": [
+                "KB_SEND_HOTKEY": [
                     "windows",
                     "r"
                 ]
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_SEND_STR",
-                "value": "shell:startup"
+                "KB_SEND_STR": "shell:startup"
             },
             {
-                "func": "DELAY",
-                "value": 0.2
+                "DELAY": 0.2
             },
             {
-                "func": "KB_KEY_PRESS",
-                "value": "enter"
+                "KB_KEY_PRESS": "enter"
             }
         ]
-    },
-    "BUTTONS": [
-        {
-            "text": "Test\n",
-            "func": "send_text"
-        },
-        {
-            "text": "Fruit loop",
-            "func": "loop_up",
-            "extra": "FRUITS",
-            "pre": [
-                [
-                    "shift",
-                    "enter"
-                ]
-            ],
-            "post": [
-                [
-                    "enter"
-                ]
-            ]
-        },
-        {
-            "text": "Undo",
-            "hotkeys": [
-                [
-                    "ctrl",
-                    "z"
-                ]
-            ],
-            "func": "send_hotkey"
-        },
-        {
-            "text": "Mouse macro",
-            "func": "rec_mouse",
-            "mouse_movements": {}
-        }
-    ]
+    }
 }

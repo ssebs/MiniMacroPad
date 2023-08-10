@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from enum import Enum
 from tkinter import Tk
-from typing import Tuple, Dict, List, Any
+from typing import Tuple, Dict, List, Union, Any
 
 from mmp.config import Config
 from mmp.stringlooper import StringLooper
@@ -154,7 +154,7 @@ class MacroManager():
         # Run action_name if defined, don't use the button position at all!
         if action_name:
             if value is None:
-                raise Exception(f"Value cannot be None for {action_name}")
+                raise Exception(f"Value cannot be None for {action_name}!")
             self.action_manager.actions[action_name](value)
             return
 
@@ -168,11 +168,9 @@ class MacroManager():
             print(f"Could not get action at pos: {position}. Make sure it's in ACTIONS in the config. Or is it 0? It should start at 1")
             return
 
-        # For every action in action_items, run the func
-        for action in action_items:
-            # action: Dict[str, any]
-            func_name = action["func"]
-            func_value = action["value"]
+        # For every _action in action_items, run the func
+        for _action in action_items:
+            func_name, func_value = next(iter(_action.items()))
             self.action_manager.actions[func_name](func_value)
 
         # # TODO: support mouse recording
@@ -221,8 +219,11 @@ class MacroManager():
         self.config.save_config()
     # rec_mouse
 
-    def _get_action_from_pos(self) -> Tuple[str, Any]:
-        """Get return and fix comments"""
+    def _get_action_from_pos(self) -> Tuple[str, Union[Dict[str, Any], str]]:
+        """Get action name & action object from self.last_pressed_pos
+        Returns:
+            Tuple[str, Union[Dict[str, Any], str]] - If the first part of the tuple is "err", then you hit an error
+        """
         # Error if the user hit a button that was bigger than actions, so we can't call anything
         if self.last_pressed_pos > len(self.config.actions.keys()) or self.last_pressed_pos == 0:
             _msg = (

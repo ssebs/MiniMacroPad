@@ -3,7 +3,7 @@
 List of work to be done for this project.
 
 ## MUST HAVE
-- [ ] Support delays!
+- [x] Support delays!
 - [ ] Config file button/action rework
   - [x] delay
   - [x] keyboard hotkey (alt+tab)
@@ -35,9 +35,6 @@ List of work to be done for this project.
 - [ ] Stop using global vars
 - [ ] Continue refactor to simplify the code
 - [ ] Fix `python -m mmp` not working
-- [ ] Change how the pre/func/post works
-  - [ ] pre/post only allow for holding keys
-  - [ ] not easy to support mouse
 - [ ] # TODO's
 - [ ] Some testing?
 - [ ] Wiring diagram?
@@ -53,6 +50,9 @@ List of work to be done for this project.
 - [ ] Support multiple pages of stuff
 
 ## Completed work (moved from todo or TD)
+- [x] Change how the pre/func/post works
+  - [x] pre/post only allow for holding keys
+  - [x] not easy to support mouse
 - [x] Fix Exception: Failed to find ./res/sampleconfig.json error
 - [x] Fix shift + enter
 - [x] Add pre and post wrapper functions to all

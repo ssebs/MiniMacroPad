@@ -44,16 +44,12 @@ I'd like to create a GUI to edit the macros, but we're not there yet. So for now
   - Expects:
     - A list of action objects
     - Action object:
-      - The key is what is displayed on the GUI, like the button name
-      - The value is a List of Dicts that have a `func` and `value`
-        - `func` must be in the Available Functions list
-        - `value` must be defined, and depends on the `func` itself
+      - REPLACE_ME_PLS_DEV
   - Action object Example:
     ```json
     "Undo": [
       {
-        "func": "KB_SEND_HOTKEY",
-        "value": [
+        "KB_SEND_HOTKEY": [
           "ctrl",
           "z"
         ]
@@ -65,27 +61,22 @@ I'd like to create a GUI to edit the macros, but we're not there yet. So for now
       ```json
       "Open Startup Folder": [
         {
-          "func": "KB_SEND_HOTKEY",
-          "value": [
+          "KB_SEND_HOTKEY": [
             "windows",
             "r"
           ]
         },
         {
-          "func": "DELAY",
-          "value": 0.2
+          "DELAY": 0.2
         },
         {
-          "func": "KB_SEND_STR",
-          "value": "shell:startup"
+          "KB_SEND_STR": "shell:startup"
         },
         {
-          "func": "DELAY",
-          "value": 0.2
+         "DELAY": 0.2
         },
         {
-          "func": "KB_KEY_PRESS",
-          "value": "enter"
+          "KB_KEY_PRESS": "enter"
         }
       ],
       ```
@@ -94,8 +85,7 @@ I'd like to create a GUI to edit the macros, but we're not there yet. So for now
   "ACTIONS": {
     "Undo": [
       {
-        "func": "KB_SEND_HOTKEY",
-        "value": [
+        "KB_SEND_HOTKEY": [
           "ctrl",
           "z"
         ]
@@ -104,32 +94,28 @@ I'd like to create a GUI to edit the macros, but we're not there yet. So for now
     "Open Startup Folder": [
       {
         "func": "KB_SEND_HOTKEY",
-        "value": [
+        "KB_SEND_HOTKEY": [
           "windows",
           "r"
         ]
       },
       {
-        "func": "DELAY",
-        "value": 0.2
+        "DELAY": 0.2
       },
       {
-        "func": "KB_SEND_STR",
-        "value": "shell:startup"
+        "KB_SEND_STR": "shell:startup"
       },
       {
-        "func": "DELAY",
-        "value": 0.2
+        "DELAY": 0.2
       },
       {
-        "func": "KB_KEY_PRESS",
-        "value": "enter"
+        "KB_KEY_PRESS": "enter"
       }
     ]
   }
   ```
 ## Available Functions:
-- `func` can be any of:
+- The key name can be any of:
   - `DELAY` (time delay)
     - `value` (how long in seconds (0.2)) type: float 
   - `KB_SEND_HOTKEY`

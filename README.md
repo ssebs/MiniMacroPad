@@ -29,7 +29,8 @@ A python TK GUI provides functionality to the mini macro pad. All driver related
 
 ### Running in dev
 - Once in a virtual environment (venv)
-  - `(venv) PS mmp> python __init__.py`
+  - `(venv) PS mmp> cd ..`
+  - `(venv) PS > python -m mmp`
 
 ### Building the .exe
 - Update the mmp.spec file to match your folder!
