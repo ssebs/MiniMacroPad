@@ -134,11 +134,11 @@ class ActionManager():
     # do_delay
 
     @set_delay
-    def do_kb_send_hotkey(self, hotkey: List[str], delay: float = None):
+    def do_kb_send_hotkey(self, hotkey: List[str], delay: float = 0.2):
         """Takes a list of keys and holds at the same time
         Params:
             keys - List[str], list of keys to hold simultaneously
-            delay - float, how long in seconds to hold the keys down. Default to self.default_delay
+            delay - float, how long in seconds to hold the keys down. Default to 0.2s
         """
         # Press all keys down
         for key in hotkey:
