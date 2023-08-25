@@ -24,7 +24,7 @@ from mmp.guimanager import GUIManager
 from mmp.macromanager import MacroManager
 
 
-def main(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
+def run(is_gui_only: bool, monitor_num: Optional[int], is_verbose: bool):
     """Start initializing the MiniMacroPad & set things up.
     Params:
         is_gui_only - bool, Run in GUI only mode. (Disable serial comms)

@@ -30,7 +30,7 @@ def main():
     )
 
     args = parser.parse_args()
-    mmp.minimacropad.main(is_gui_only=args.gui_only, monitor_num=args.monitor, is_verbose=args.verbose)
+    mmp.minimacropad.run(is_gui_only=args.gui_only, monitor_num=args.monitor, is_verbose=args.verbose)
 # run
 
 
