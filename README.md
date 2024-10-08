@@ -1,5 +1,7 @@
 # MiniMacroPad
 
+> NOTE: This repo is deprecated, use https://github.com/ssebs/go-mmp instead
+
 Keyboard firmware and driver for my 3D printed macropad. You can use a Arduino Pro Micro (or teensy lc in my case).
 
 The goal of this project is to have a physical macro pad that you can customize. You can set keyboard/mouse macros with it for general use, and it supports not having the physical buttons too if you don't have the hardware.
